@@ -6,7 +6,7 @@
 namespace Game {
 	class CPlayer::CFall {
 	private:
-		const CResourceMgr* const mResourceMgr;	// サウンド再生に使用
+		std::shared_ptr<const CResourceMgr> const mResourceMgr;	// サウンド再生に使用
 
 		float mSpeed;	// 自由落下の速度。大きいほどすぐ落ちる。小数点以下第1位まで反映
 		int mCount;
@@ -17,16 +17,16 @@ namespace Game {
 		static const int mLandFrame;	// 何フレーム着地していたら、着地となるか
 
 		// 移動先の情報
-		int mDestinationAngle;	// 角度 : mDestinationAngle * (pi/2)
+		int mDestinationAngle;	// 角度 : mDestinationAngle * M_PI_2 (= pi/2)
 		int mDestinationJ;		// J+1列
 
-		PuyoSet* const mCurrentPuyoSet;	// 現在操作中のぷよのセット
+		std::shared_ptr<PuyoSet> const mCurrentPuyoSet;	// 現在操作中のぷよのセット
 		const int mPuyoSize;			// 1つのぷよの幅・高さ
 		const int mRow;					// 見える領域の行数
 		const int mCol;					// 見える領域の列数
 
-		CPuyoField* const mPuyoField;	// ぷよ領域
-		const Point* const mFieldPoint; // フィールド初期位置
+		std::shared_ptr<CPuyoField> const mPuyoField;	// ぷよ領域
+		const Point mFieldPoint; // フィールド初期位置
 
 		// p の位置にあるぷよが、他のぷよや壁と被っているか判定する
 		bool overlapped(const Point& p) const;
@@ -55,7 +55,7 @@ namespace Game {
 		int Move();			// 左右の移動に関する処理。0 = 移動終了
 		int FreeFall();		// 自由落下。自由落下しなかったとき、0を返す
 	public:
-		CFall(PuyoSet* currentPuyoSet, const Point* fieldPoint, CPuyoField* puyoField, int puyo_size, int row, int col, const CResourceMgr* resourceMgr);
+		CFall(std::shared_ptr<PuyoSet> currentPuyoSet, const Point fieldPoint, std::shared_ptr<CPuyoField> puyoField, int puyo_size, int row, int col, std::shared_ptr<const CResourceMgr> resourceMgr);
 		int Run();
 	};
 }

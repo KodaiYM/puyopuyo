@@ -3,7 +3,7 @@
 #include <DxLib.h>
 
 using namespace Game;
-CPuyoField::CPuyoField(int row, int col, int puyo_size, const CResourceMgr* resourceMgr) :mRow(row), mCol(col), mPuyoSize(puyo_size), mResourceMgr(resourceMgr) {
+CPuyoField::CPuyoField(int row, int col, int puyo_size, const std::shared_ptr<const CResourceMgr> resourceMgr) :mRow(row), mCol(col), mPuyoSize(puyo_size), mResourceMgr(std::move(resourceMgr)) {
 	mField.resize(mRow + 1);
 	mConnectionCount.resize(mRow);
 	/* ‚Õ‚æƒtƒB[ƒ‹ƒh‚Ì‰Šú‰» */
@@ -24,11 +24,8 @@ CPuyoField::CPuyoField(int row, int col, int puyo_size, const CResourceMgr* reso
 	mChain = 0;
 	mScene = Scene::drop;
 }
-void CPuyoField::set(const Puyo* puyo, int i, int j) {
-	Puyo p;
-	p.point = puyo->point;
-	p.type = puyo->type;
-	mField[i + 1][j] = p;
+void CPuyoField::set(Puyo puyo, int i, int j) {
+	mField[i + 1][j] = puyo;
 }
 PuyoType CPuyoField::getPuyoType(int i, int j) const {
 	if (i < -1) {
@@ -43,10 +40,10 @@ PuyoType CPuyoField::getPuyoType(int i, int j) const {
 bool CPuyoField::GameOvered() const {
 	return getPuyoType(0, mCol / 2 - 1) != PuyoType::none || getPuyoType(0, mCol / 2) != PuyoType::none;
 }
-void CPuyoField::Draw(const Point* field) const {
+void CPuyoField::Draw(Point field) const {
 	// ~‚ð•`‚­
-	DrawGraph(field->x + (mCol / 2 - 1)*mPuyoSize, field->y, mResourceMgr->getGraphicHandle((int)GraphicName::cross), TRUE);
-	DrawGraph(field->x + (mCol / 2)*mPuyoSize, field->y, mResourceMgr->getGraphicHandle((int)GraphicName::cross), TRUE);
+	DrawGraph(field.x + (mCol / 2 - 1)*mPuyoSize, field.y, mResourceMgr->getGraphicHandle((int)GraphicName::cross), TRUE);
+	DrawGraph(field.x + (mCol / 2)*mPuyoSize, field.y, mResourceMgr->getGraphicHandle((int)GraphicName::cross), TRUE);
 	switch (mScene) {
 	case Scene::drop:
 	case Scene::judge_popable:
@@ -56,8 +53,8 @@ void CPuyoField::Draw(const Point* field) const {
 				Puyo puyo(mField[i + 1][j]);
 
 				// ‘Š‘ÎÀ•W‚ðâ‘ÎÀ•W‚É’¼‚µ‚Ä‚©‚ç•`‚­
-				puyo.point.x += field->x + mPuyoSize * j;
-				puyo.point.y += field->y + mPuyoSize * i;
+				puyo.point.x += field.x + mPuyoSize * j;
+				puyo.point.y += field.y + mPuyoSize * i;
 				puyo.Draw(mResourceMgr);
 			}
 		}
@@ -70,11 +67,11 @@ void CPuyoField::Draw(const Point* field) const {
 				Puyo puyo(mField[i + 1][j]);
 
 				// ‘Š‘ÎÀ•W‚ðâ‘ÎÀ•W‚É’¼‚µ‚Ä‚©‚ç•`‚­
-				puyo.point.x += field->x + mPuyoSize * j;
-				puyo.point.y += field->y + mPuyoSize * i;
+				puyo.point.x += field.x + mPuyoSize * j;
+				puyo.point.y += field.y + mPuyoSize * i;
 
 				if (getConnectionNum(i, j) >= 4) {
-					SetDrawBlendMode(DX_BLENDMODE_ALPHA, mTransparency);
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, *mTransparency);
 					puyo.Draw(mResourceMgr);
 					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 				} else {
@@ -147,12 +144,12 @@ int CPuyoField::Pop() {
 				CountConnection(i, j);
 			}
 		}
-		mTransparency = 255;
-		mBlinkPopPuyo = new blink_pop_puyo(&mTransparency);
+		mTransparency = std::make_unique<int>(255);
+		mBlinkPopPuyo = std::make_unique<blink_pop_puyo>(mTransparency);
 		mScene = Scene::blink_pop_puyo;
 	case Scene::blink_pop_puyo:
 		if (mBlinkPopPuyo->blink() == 0) {
-			delete mBlinkPopPuyo;
+			mBlinkPopPuyo.reset();
 			mChain++;
 			switch (mChain) {
 			case 1:
@@ -181,8 +178,8 @@ int CPuyoField::Pop() {
 		}
 		break;
 	case Scene::pop:
-		mTransparency -= 15;
-		if (mTransparency <= 0) {
+		*mTransparency -= 15;
+		if (*mTransparency <= 0) {
 			for (int i = 0; i < mRow; i++) {
 				for (int j = 0; j < mCol; j++) {
 					if (getConnectionNum(i, j) >= 4) {
@@ -191,15 +188,15 @@ int CPuyoField::Pop() {
 					mConnectionCount[i][j] = -1;
 				}
 			}
-			mTransparency = 0;
+			mTransparency.reset();
 			mScene = Scene::drop;
 		}
 		break;
 	}
 	return 1;
 }
-CPuyoField::blink_pop_puyo::blink_pop_puyo(int* transparency)
-	:mTransparency(transparency), mMaxTransparency(*transparency), mMinTransparency(*transparency - 100) {
+CPuyoField::blink_pop_puyo::blink_pop_puyo(std::shared_ptr<int> transparency)
+	:mMaxTransparency(*transparency), mMinTransparency(*transparency - 100), mTransparency(std::move(transparency)) {
 	mCounter = 0;
 }
 int CPuyoField::blink_pop_puyo::blink() {
@@ -299,14 +296,15 @@ int CPuyoField::Drop() {
 	for (int j = 0; j < mCol; j++) {
 		bool droppable = false;
 		for (int i = mRow - 1; i >= -1; i--) {
-			Puyo* puyo = &mField[i + 1][j];
-			if (puyo->type == PuyoType::none) {
+			Puyo& puyo = mField[i + 1][j];
+			if (puyo.type == PuyoType::none) {
 				droppable = true;
 			} else if (droppable) {
 				dropping = true;
-				puyo->point.y += 4;
-				if (puyo->point.y >= mPuyoSize) {
-					puyo->point.y = 0;
+				puyo.point.y += 4;
+				if (puyo.point.y >= mPuyoSize) {
+					puyo.point.y = 0;
+
 					set(puyo, i + 1, j);
 					remove(i, j);
 				}

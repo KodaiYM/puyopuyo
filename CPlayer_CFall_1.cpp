@@ -8,8 +8,8 @@ using namespace Game;
 const int CPlayer::CFall::mRotateFrame = 8;
 const int CPlayer::CFall::mMoveFrame = 5;
 const int CPlayer::CFall::mLandFrame = 60;
-CPlayer::CFall::CFall(PuyoSet* currentPuyoSet, const Point* fieldPoint, CPuyoField* puyoField, int puyo_size, int row, int col, const CResourceMgr* resourceMgr)
-	:mCurrentPuyoSet(currentPuyoSet), mFieldPoint(fieldPoint), mPuyoSize(puyo_size), mRow(row), mCol(col), mPuyoField(puyoField), mResourceMgr(resourceMgr) {
+CPlayer::CFall::CFall(std::shared_ptr<PuyoSet> currentPuyoSet, const Point fieldPoint, std::shared_ptr<CPuyoField> puyoField, int puyo_size, int row, int col, std::shared_ptr<const CResourceMgr> resourceMgr)
+	:mCurrentPuyoSet(std::move(currentPuyoSet)), mFieldPoint(fieldPoint), mPuyoSize(puyo_size), mRow(row), mCol(col), mPuyoField(std::move(puyoField)), mResourceMgr(std::move(resourceMgr)) {
 	mSpeed = 1.6f;
 	mCount = 0;
 	mLandCount = 0;
@@ -23,19 +23,22 @@ int CPlayer::CFall::Run() {
 	bool not_moved = (Move() == 0);
 
 	// デバッグ用
+#if DEBUG|_DEBUG
 	if (KeyStateOf(KEY_INPUT_UP)) {
 		mCurrentPuyoSet->point.y--;
 	}
+#endif
 
-	// 自由落下しなかったとき、着地判定
-	if (not_falled) {
+	// 自由落下できない状況のとき、着地判定
+	if (!movable(Puyo::Direction::bottom, true) || !movable(getPoint(mDestinationAngle*M_PI_2), Puyo::Direction::bottom)) {
 		// 下キーを押していたら、着地カウントを加速
 		if (KeyStateOf(KEY_INPUT_DOWN)) {
 			mLandCount += 10;
 		}
-		// LandCount が 60 以上で、回転や移動をしていなければ
 		if (not_rotated && not_moved) {
 			mLandCount++;
+
+			// 着地カウントが、ある数以上のとき
 			if (mLandCount >= mLandFrame) {
 				Puyo p0;
 				p0.point.x = p0.point.y = 0;
@@ -43,23 +46,33 @@ int CPlayer::CFall::Run() {
 
 				switch (Remainder(mDestinationAngle, 4)) {
 				case 0:
-					mPuyoField->set(&p0, geti(mCurrentPuyoSet->point.y), getj(mCurrentPuyoSet->point.x) + 1);
+					if (geti(mCurrentPuyoSet->point.y) != -2) {
+						mPuyoField->set(p0, geti(mCurrentPuyoSet->point.y), getj(mCurrentPuyoSet->point.x) + 1);
+					}
 					break;
 				case 1:
-					mPuyoField->set(&p0, geti(mCurrentPuyoSet->point.y) - 1, getj(mCurrentPuyoSet->point.x));
+					if (geti(mCurrentPuyoSet->point.y) - 1 != -2) {
+						mPuyoField->set(p0, geti(mCurrentPuyoSet->point.y) - 1, getj(mCurrentPuyoSet->point.x));
+					}
 					break;
 				case 2:
-					mPuyoField->set(&p0, geti(mCurrentPuyoSet->point.y), getj(mCurrentPuyoSet->point.x) - 1);
+					if (geti(mCurrentPuyoSet->point.y) != -2) {
+						mPuyoField->set(p0, geti(mCurrentPuyoSet->point.y), getj(mCurrentPuyoSet->point.x) - 1);
+					}
 					break;
 				case 3:
-					mPuyoField->set(&p0, geti(mCurrentPuyoSet->point.y) + 1, getj(mCurrentPuyoSet->point.x));
+					if (geti(mCurrentPuyoSet->point.y) + 1 != -2) {
+						mPuyoField->set(p0, geti(mCurrentPuyoSet->point.y) + 1, getj(mCurrentPuyoSet->point.x));
+					}
 					break;
 				}
 
 				Puyo p1;
 				p1.point.x = p1.point.y = 0;
 				p1.type = mCurrentPuyoSet->type[1];
-				mPuyoField->set(&p1, geti(mCurrentPuyoSet->point.y), getj(mCurrentPuyoSet->point.x));
+				if (geti(mCurrentPuyoSet->point.y) != -2) {
+					mPuyoField->set(p1, geti(mCurrentPuyoSet->point.y), getj(mCurrentPuyoSet->point.x));
+				}
 
 				mCount = 0;
 				mLandCount = 0;
@@ -76,8 +89,8 @@ int CPlayer::CFall::Run() {
 
 Point CPlayer::CFall::getPoint(const Point& point, double angle) const {
 	Point p;
-	p.x = (int)std::round(point.x + mPuyoSize*std::cos(angle));
-	p.y = (int)std::round(point.y - mPuyoSize*std::sin(angle));
+	p.x = (int)std::round(point.x + mPuyoSize * std::cos(angle));
+	p.y = (int)std::round(point.y - mPuyoSize * std::sin(angle));
 	return p;
 }
 Point CPlayer::CFall::getPoint(double angle) const {
@@ -85,16 +98,16 @@ Point CPlayer::CFall::getPoint(double angle) const {
 	return p;
 }
 int CPlayer::CFall::geti(int y) const {
-	return Quotient(y - mFieldPoint->y, mPuyoSize);
+	return Quotient(y - mFieldPoint.y, mPuyoSize);
 }
 int CPlayer::CFall::getj(int x) const {
-	return Quotient(x - mFieldPoint->x, mPuyoSize);
+	return Quotient(x - mFieldPoint.x, mPuyoSize);
 }
 int CPlayer::CFall::getx(int j) const {
-	return mFieldPoint->x + j*mPuyoSize;
+	return mFieldPoint.x + j * mPuyoSize;
 }
 int CPlayer::CFall::gety(int i) const {
-	return mFieldPoint->y + i*mPuyoSize;
+	return mFieldPoint.y + i * mPuyoSize;
 }
 bool CPlayer::CFall::movable(Puyo::Direction direction) const {
 	return movable(direction, true) && movable(direction, false);

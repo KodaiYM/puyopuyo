@@ -22,32 +22,32 @@
     <ProjectGuid>{B892BC9F-F0C0-4CCD-A86E-E5BC204DEA32}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>puyopuyo</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -91,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>./DxLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,50 +153,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CBaseScene.h" />
+    <ClInclude Include="CBasePuyopuyo.h" />
     <ClInclude Include="CBright.h" />
-    <ClInclude Include="CPlayer_CFall.h" />
-    <ClInclude Include="CResourceMgr.h" />
-    <ClInclude Include="CPlayer.h" />
-    <ClInclude Include="CPuyoField.h" />
+    <ClInclude Include="CMgr.h" />
+    <ClInclude Include="CObj.h" />
+    <ClInclude Include="CObjMgr.h" />
+    <ClInclude Include="Opening.title.h" />
+    <ClInclude Include="ResMgr.h" />
     <ClInclude Include="CSceneMgr.h" />
-    <ClInclude Include="CSceneTask.h" />
     <ClInclude Include="function.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="Game_define.h" />
-    <ClInclude Include="ISceneChanger.h" />
+    <ClInclude Include="names.h" />
+    <ClInclude Include="Objects.h" />
+    <ClInclude Include="Opening.logo.h" />
     <ClInclude Include="key.h" />
     <ClInclude Include="Opening.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CBaseScene.cpp" />
     <ClCompile Include="CBright.cpp" />
-    <ClCompile Include="CPlayer_CFall_1.cpp" />
-    <ClCompile Include="CPlayer_CFall_2.cpp" />
-    <ClCompile Include="CResourceMgr.cpp" />
-    <ClCompile Include="CPlayer.cpp" />
-    <ClCompile Include="CPuyoField.cpp" />
+    <ClCompile Include="Objects.cpp" />
+    <ClCompile Include="Opening.title.cpp" />
+    <ClCompile Include="ResMgr.cpp" />
     <ClCompile Include="CSceneMgr.cpp" />
     <ClCompile Include="function.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="ISceneChanger.cpp" />
     <ClCompile Include="key.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Opening.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClCompile Include="Opening.logo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets" Condition="Exists('packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" />
-    <Import Project="packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets'))" />
-    <Error Condition="!Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

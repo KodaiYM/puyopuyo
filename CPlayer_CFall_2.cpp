@@ -65,6 +65,7 @@ int CPlayer::CFall::FreeFall() {
 		mCurrentPuyoSet->point.y++;
 		falled = true;
 	}
+
 	return falled ? 1 : 0;
 }
 int CPlayer::CFall::Rotate() {
@@ -89,7 +90,7 @@ int CPlayer::CFall::Rotate() {
 	// まずは、両側埋まっているような例外を除いて考えよう
 
 	// 回転が必要なとき
-	if (mCurrentPuyoSet->angle != mDestinationAngle*M_PI_2) {
+	if (mCurrentPuyoSet->angle != mDestinationAngle * M_PI_2) {
 		const int x = mCurrentPuyoSet->point.x;
 		const int y = mCurrentPuyoSet->point.y;
 
@@ -144,8 +145,8 @@ int CPlayer::CFall::Rotate() {
 
 		mCurrentPuyoSet->angle += anglePerFrame;
 		// 目的の角度に近いとき
-		if (abs(mCurrentPuyoSet->angle - mDestinationAngle*M_PI_2) < abs(anglePerFrame)) {
-			mCurrentPuyoSet->angle = mDestinationAngle*M_PI_2;
+		if (abs(mCurrentPuyoSet->angle - mDestinationAngle * M_PI_2) < abs(anglePerFrame)) {
+			mCurrentPuyoSet->angle = mDestinationAngle * M_PI_2;
 		}
 
 		return 1;
@@ -163,13 +164,13 @@ bool CPlayer::CFall::rotatable(int x, int y, double angle) {
 }
 bool CPlayer::CFall::overlapped(const Point& p) const {
 	// 壁に被っている場合
-	if (p.x < mFieldPoint->x || p.x + mPuyoSize > mFieldPoint->x + mCol*mPuyoSize || p.y + mPuyoSize > mFieldPoint->y + mRow*mPuyoSize) {
+	if (p.x < mFieldPoint.x || p.x + mPuyoSize > mFieldPoint.x + mCol * mPuyoSize || p.y + mPuyoSize > mFieldPoint.y + mRow * mPuyoSize) {
 		return true;
 	}
 	// ちょうど行にいる場合
-	if (Remainder(p.y - mFieldPoint->y, mPuyoSize) == 0) {
+	if (Remainder(p.y - mFieldPoint.y, mPuyoSize) == 0) {
 		// ちょうど行・列にいる場合
-		if (Remainder(p.x - mFieldPoint->x, mPuyoSize) == 0) {
+		if (Remainder(p.x - mFieldPoint.x, mPuyoSize) == 0) {
 			// その位置にぷよがあるか見る
 			if (mPuyoField->getPuyoType(geti(p.y), getj(p.x)) == PuyoType::none) {
 				return false;
@@ -186,7 +187,7 @@ bool CPlayer::CFall::overlapped(const Point& p) const {
 	// 行に関して微妙な位置にいる場合
 	else {
 		// ちょうど列にいる場合
-		if (Remainder(p.x - mFieldPoint->x, mPuyoSize) == 0) {
+		if (Remainder(p.x - mFieldPoint.x, mPuyoSize) == 0) {
 			// 上と下を見る
 			if (mPuyoField->getPuyoType(geti(p.y), getj(p.x)) == PuyoType::none && mPuyoField->getPuyoType(geti(p.y) + 1, getj(p.x)) == PuyoType::none) {
 				return false;
@@ -206,33 +207,45 @@ bool CPlayer::CFall::overlapped(const Point& p) const {
 	return true;
 }
 int CPlayer::CFall::Move() {
+	Point const axis_destination_point = { getx(mDestinationJ), mCurrentPuyoSet->point.y };
+	Point const non_axis_destination_point = getPoint(axis_destination_point, (double)mDestinationAngle*M_PI_2);
+
 	if (KeyStateOf(KEY_INPUT_LEFT) == 1 || (KeyStateOf(KEY_INPUT_LEFT) > 10 && KeyStateOf(KEY_INPUT_LEFT) % 3 == 1)) {
-		if (movable(Puyo::Direction::left)) {
+		if (movable(axis_destination_point, Puyo::Direction::left) && movable(non_axis_destination_point, Puyo::Direction::left)) {
 			PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::move), DX_PLAYTYPE_BACK);
 			mDestinationJ--;
 		}
 	} else if (KeyStateOf(KEY_INPUT_RIGHT) == 1 || (KeyStateOf(KEY_INPUT_RIGHT) > 10 && KeyStateOf(KEY_INPUT_RIGHT) % 3 == 1)) {
-		if (movable(Puyo::Direction::right)) {
+		if (movable(axis_destination_point, Puyo::Direction::right) && movable(non_axis_destination_point, Puyo::Direction::right)) {
 			PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::move), DX_PLAYTYPE_BACK);
 			mDestinationJ++;
 		}
 	}
-	if (mDestinationJ < 0) {
-		mDestinationJ = 0;
-	}
-	if (mDestinationJ >= mCol) {
-		mDestinationJ = mCol - 1;
-	}
+
 	if (mCurrentPuyoSet->point.x != getx(mDestinationJ)) {
 		// 1フレームで移動したい量
 		int quantityPerFrame = mPuyoSize / mMoveFrame;
+		printf("%d, %d\n", mCurrentPuyoSet->point.x, getx(mDestinationJ)); // 199, 237
+
 		// 右に移動
 		if (mCurrentPuyoSet->point.x < getx(mDestinationJ)) {
-			mCurrentPuyoSet->point.x += quantityPerFrame;
+			// 移動予定先が移動できないはずの場所であるという異常の場合
+			if (overlapped(axis_destination_point) || overlapped(non_axis_destination_point)) {
+				mDestinationJ--;
+				if (mCurrentPuyoSet->point.x == getx(mDestinationJ))return 0;
+			} else {
+				mCurrentPuyoSet->point.x += quantityPerFrame;
+			}
 		}
 		// 左に移動
 		else {
-			mCurrentPuyoSet->point.x -= quantityPerFrame;
+			// 移動予定先が移動できないはずの場所であるという異常の場合
+			if (overlapped(axis_destination_point) || overlapped(non_axis_destination_point)) {
+				mDestinationJ++;
+				if (mCurrentPuyoSet->point.x == getx(mDestinationJ))return 0;
+			} else {
+				mCurrentPuyoSet->point.x -= quantityPerFrame;
+			}
 		}
 
 		// 被っていた場合

@@ -1,27 +1,51 @@
-#ifndef _INCLUDE_GUARD_GAME_
-#define _INCLUDE_GUARD_GAME_
+#pragma once
 
-#include "CBaseScene.h"
-#include "CResourceMgr.h"
+#include "CSceneMgr.h"
 #include "Game_define.h"
 #include "CPlayer.h"
+#include <vector>
 
-//ゲーム画面クラス
-class CGame : public CBaseScene, CResourceMgr {
-public:
-	CGame(ISceneChanger* changer);
-	void Run() override;
-private:
-	enum class Scene {
-		init,
-		run
+//オープニング画面クラス
+namespace Game {
+	// 子フェーズで共用する関数
+	class Functions {
 	};
-	static const std::unordered_map <Game::GraphicName, const char*> GraphicPath;
-	static const std::unordered_map <Game::SoundName, const char*> SoundPath;
+	// フェーズ管理のクラス
+	class Scene : public CSceneMgr, public Functions, public std::enable_shared_from_this<Scene> {
+	private:
+		const std::weak_ptr<ISceneChanger> mSceneChanger;
+		const std::shared_ptr<IResourceHandlers> mResourceHandler;
+		std::vector<GraphicName> getGraphicNames() const override {
+			std::vector<GraphicName> names = {
+				GraphicName::background,
+				GraphicName::frame,
+				GraphicName::ojama,
+				GraphicName::cross,
+				GraphicName::left_next,
+				GraphicName::right_next,
+				GraphicName::blue,
+				GraphicName::green,
+				GraphicName::pink,
+				GraphicName::red
+			};
+			return names;
+		}
+		std::vector<SoundName> getSoundNames() const override {
+			std::vector<SoundName> names = {
+				SoundName::chain,
+				SoundName::game_over,
+				SoundName::land,
+				SoundName::move,
+				SoundName::rotate
+			};
+			return names;
+		}
+		std::unique_ptr<Game::CPlayer> mPlayer;
+		std::unique_ptr<CResourceMgr> mResourceMgr;
 
-	Scene mScene;
-	Game::CPlayer* mPlayer;
-	CResourceMgr* mResourceMgr;
-};
+	public:
+		Scene(std::weak_ptr<ISceneChanger> sceneChanger, std::shared_ptr<IResourceHandlers> resourceHanlder);
 
-#endif
+		virtual void init() override;
+	};
+}

@@ -1,0 +1,14 @@
+@echo off
+cd /d %~dp0
+setlocal enabledelayedexpansion
+
+for %%f in (*.png) do (
+    set str0=%%f
+    set str1=!str0:splash512_inout_=!
+    set str2=!str1:.png=!
+    set /a number=1!str2!-10000
+    move "!str0!" ".\process\!number!.png"
+)
+
+endlocal
+pause

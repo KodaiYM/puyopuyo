@@ -5,6 +5,7 @@
 #include "CResourceMgr.h"
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 /* ×はここで作成すると良いよ。ゲームオーバーを伝える関数も用意しよう。 */
 
@@ -13,14 +14,14 @@ namespace Game {
 	class CPuyoField {
 	public:
 		// row:行数(見えない一行は含まない), col:列数, puyo_size:ぷよの高さ、幅
-		CPuyoField(int row, int col, int puyo_size, const CResourceMgr* resourceMgr);
+		CPuyoField(int row, int col, int puyo_size, std::shared_ptr<const CResourceMgr> const resourceMgr);
 
 		// 4つ以上つながっているぷよの削除。0で終了、1で実行中
 		int Pop();
 
 		// 見える領域で、i+1行 j+1列 に相当する位置にぷよを設置する(i=-1で見えない行)
-		// puyo->point は、i+1行 j+1列 に相当する位置から、相対位置で指定
-		void set(const Puyo* puyo, int i, int j);
+		// puyo.point は、i+1行 j+1列 に相当する位置から、相対位置で指定
+		void set(Puyo puyo, int i, int j);
 		// 見える領域で、i+1行 j+1列 に相当する位置のぷよを消す
 		void remove(int i, int j);
 
@@ -35,12 +36,12 @@ namespace Game {
 		bool GameOvered() const;
 
 		// 基準となる左上の座標を指定することで、その位置を基準として描く
-		void Draw(const Point* field) const;
+		void Draw(Point field) const;
 	private:
 		const int mRow;			// 行数
 		const int mCol;			// 列数
 		const int mPuyoSize;	// ぷよの高さ、幅
-		const CResourceMgr* mResourceMgr;
+		std::shared_ptr<const CResourceMgr> const mResourceMgr;
 		std::vector< std::vector<Puyo> > mField;		// ぷよ領域。ぷよの位置は相対保持
 		// いくつぷよがつながっているのかのカウント保存用
 		// 0:ぷよがない または おじゃまぷよ
@@ -51,7 +52,7 @@ namespace Game {
 		int subCountConnection(int i, int j, PuyoType type, std::vector< std::vector<bool> >* connected);
 
 		int mChain;	// 連鎖数
-		int mTransparency;	// ぷよが消える時の透明度
+		std::shared_ptr<int> mTransparency;	// ぷよが消える時の透明度
 		enum class Scene {
 			drop,			// ぷよ領域のぷよ落下中
 			judge_popable,	// 消せるぷよがあるか判定
@@ -68,13 +69,13 @@ namespace Game {
 			const int mMaxTransparency;	// 最大透明度
 			const int mMinTransparency;	// 最小透明度
 			const int mSpeed = 8;		// 透明度の変化量
-			int* const mTransparency;	// 透明度の変数
+			std::shared_ptr<int> const mTransparency;	// 透明度の変数
 		public:
-			blink_pop_puyo(int *transparency);
+			blink_pop_puyo(std::shared_ptr<int> transparency);
 			// 点滅させる。0で終了。
 			int blink();
 		};
-		blink_pop_puyo* mBlinkPopPuyo;
+		std::unique_ptr<blink_pop_puyo> mBlinkPopPuyo;
 
 		int Drop();	// 宙に浮いているぷよを落とす
 	};

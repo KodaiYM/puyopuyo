@@ -9,15 +9,19 @@ static const int row = 12;
 static const int col = 6;
 
 using namespace Game;
-CPlayer::CPlayer(int colors, int row, int col, int puyo_size, const CResourceMgr *resourceMgr, std::unordered_map<PointName, Point> point)
-	:mDefaultPoint(point), mPuyoField(new CPuyoField(12, 6, 38, resourceMgr)),
-	mColors(colors), mRow(row), mCol(col), mPuyoSize(puyo_size), mResourceMgr(resourceMgr) {
-	mFallMgr = new CFall(&mPuyoSet[(int)SetName::current], &mDefaultPoint.at(PointName::field), mPuyoField, mPuyoSize, mRow, mCol, resourceMgr);
+CPlayer::CPlayer(int colors, int row, int col, int puyo_size, std::shared_ptr<const CResourceMgr> resourceMgr, std::unordered_map<PointName, const Point> point)
+	:mResourceMgr(std::move(resourceMgr)), mDefaultPoint(point), mPuyoField(std::make_shared<CPuyoField>(12, 6, 38, mResourceMgr)),
+	mColors(colors), mRow(row), mCol(col), mPuyoSize(puyo_size) {
+	mPuyoSet[(int)SetName::current] = std::make_shared<PuyoSet>();
+	mPuyoSet[(int)SetName::next] = std::make_unique<PuyoSet>();
+	mPuyoSet[(int)SetName::nextnext] = std::make_unique<PuyoSet>();
+
+	mFallMgr = std::make_unique<CFall>(mPuyoSet[(int)SetName::current], mDefaultPoint.at(PointName::field), mPuyoField, mPuyoSize, mRow, mCol, mResourceMgr);
+
 	mScene = Scene::init;
 	mCount = 0;
 }
 CPlayer::~CPlayer() {
-	delete mPuyoField;
 }
 void CPlayer::Run() {
 	Calc();
@@ -33,19 +37,19 @@ void CPlayer::Calc() {
 	};
 	switch (mScene) {
 	case Scene::init:
-		mPuyoSet[(int)SetName::current].angle = M_PI_2;
-		mPuyoSet[(int)SetName::current].point = mDefaultPoint.at(PointName::current);
+		mPuyoSet[(int)SetName::current]->angle = M_PI_2;
+		mPuyoSet[(int)SetName::current]->point = mDefaultPoint.at(PointName::current);
 
-		mPuyoSet[(int)SetName::next].angle = M_PI_2;
-		mPuyoSet[(int)SetName::next].point = mDefaultPoint.at(PointName::next);
+		mPuyoSet[(int)SetName::next]->angle = M_PI_2;
+		mPuyoSet[(int)SetName::next]->point = mDefaultPoint.at(PointName::next);
 
-		mPuyoSet[(int)SetName::nextnext].angle = M_PI_2;
-		mPuyoSet[(int)SetName::nextnext].point = mDefaultPoint.at(PointName::nextnext);
+		mPuyoSet[(int)SetName::nextnext]->angle = M_PI_2;
+		mPuyoSet[(int)SetName::nextnext]->point = mDefaultPoint.at(PointName::nextnext);
 
 		for (int i = 0; i < 2; i++) {
-			mPuyoSet[(int)SetName::nextnext].type[i] = getPuyoType[GetRand(mColors - 1)];
-			mPuyoSet[(int)SetName::next].type[i] = getPuyoType[GetRand(mColors - 1)];
-			mPuyoSet[(int)SetName::current].type[i] = PuyoType::none;
+			mPuyoSet[(int)SetName::nextnext]->type[i] = getPuyoType[GetRand(mColors - 1)];
+			mPuyoSet[(int)SetName::next]->type[i] = getPuyoType[GetRand(mColors - 1)];
+			mPuyoSet[(int)SetName::current]->type[i] = PuyoType::none;
 		}
 
 		mScene = Scene::next;
@@ -53,25 +57,26 @@ void CPlayer::Calc() {
 	case Scene::next:
 		mCount++;
 		if (mCount > 27) {
-			mPuyoSet[(int)SetName::current] = mPuyoSet[(int)SetName::next];
-			mPuyoSet[(int)SetName::next] = mPuyoSet[(int)SetName::nextnext];
-			for (int i = 0; i < 2; i++) {
-				mPuyoSet[(int)SetName::nextnext].type[i] = getPuyoType[GetRand(mColors - 1)];
-			}
+			*mPuyoSet[(int)SetName::current] = *mPuyoSet[(int)SetName::next];
+			*mPuyoSet[(int)SetName::next] = *mPuyoSet[(int)SetName::nextnext];
 
-			mPuyoSet[(int)SetName::current].point = mDefaultPoint.at(PointName::current);
-			mPuyoSet[(int)SetName::next].point = mDefaultPoint.at(PointName::next);
-			mPuyoSet[(int)SetName::nextnext].point = mDefaultPoint.at(PointName::nextnext);
+			mPuyoSet[(int)SetName::current]->point = mDefaultPoint.at(PointName::current);
+			mPuyoSet[(int)SetName::next]->point = mDefaultPoint.at(PointName::next);
+
+			mPuyoSet[(int)SetName::nextnext]->point = mDefaultPoint.at(PointName::nextnext);
+			for (int i = 0; i < 2; i++) {
+				mPuyoSet[(int)SetName::nextnext]->type[i] = getPuyoType[GetRand(mColors - 1)];
+			}
 
 			mCount = 0;
 			mScene = Scene::fall;
 			break;
 		} else {
-			mPuyoSet[(int)SetName::next].point.y -= 3;
-			mPuyoSet[(int)SetName::nextnext].point.y -= 3;
+			mPuyoSet[(int)SetName::next]->point.y -= 3;
+			mPuyoSet[(int)SetName::nextnext]->point.y -= 3;
 
 			if (mCount % 2 == 1) {
-				mPuyoSet[(int)SetName::nextnext].point.x--;
+				mPuyoSet[(int)SetName::nextnext]->point.x--;
 			}
 		}
 		break;
@@ -109,42 +114,32 @@ void CPlayer::Draw() const {
 		DrawGraph(0, 0, mResourceMgr->getGraphicHandle((int)GraphicName::background), TRUE);
 		DrawGraph(mDefaultPoint.at(PointName::next_field).x, mDefaultPoint.at(PointName::next_field).y, mResourceMgr->getGraphicHandle((int)GraphicName::left_next), TRUE);
 
-		DrawPuyoSet(&mPuyoSet[(int)SetName::next]);
-		DrawPuyoSet(&mPuyoSet[(int)SetName::nextnext]);
+		DrawPuyoSet(*mPuyoSet[(int)SetName::next]);
+		DrawPuyoSet(*mPuyoSet[(int)SetName::nextnext]);
 
-		mPuyoField->Draw(&mDefaultPoint.at(PointName::field));
+		mPuyoField->Draw(mDefaultPoint.at(PointName::field));
 
 		if (mScene == Scene::fall) {
-			DrawPuyoSet(&mPuyoSet[(int)SetName::current]);
+			DrawPuyoSet(*mPuyoSet[(int)SetName::current]);
 		}
 
 		DrawGraph(0, 0, mResourceMgr->getGraphicHandle((int)GraphicName::frame), TRUE);
 		break;
 	}
 }
-void CPlayer::DrawPuyoSet(const PuyoSet* puyoset) const {
+void CPlayer::DrawPuyoSet(PuyoSet puyoset) const {
 	Puyo puyo0, puyo1;
 
-	puyo1.point = puyoset->point;
-	puyo1.type = puyoset->type[1];
+	puyo1.point = puyoset.point;
+	puyo1.type = puyoset.type[1];
 
-	puyo0.point.x = (int)std::round(puyo1.point.x + mPuyoSize*std::cos(puyoset->angle));
-	puyo0.point.y = (int)std::round(puyo1.point.y - mPuyoSize*std::sin(puyoset->angle));
-	puyo0.type = puyoset->type[0];
-
-	/*
-	if (puyo0.type == puyo1.type) {
-		puyo0.setConnectionState(Puyo::Direction::bottom, true);
-		puyo1.setConnectionState(Puyo::Direction::top, true);
-	}
-	*/
+	puyo0.point.x = (int)std::round(puyo1.point.x + mPuyoSize * std::cos(puyoset.angle));
+	puyo0.point.y = (int)std::round(puyo1.point.y - mPuyoSize * std::sin(puyoset.angle));
+	puyo0.type = puyoset.type[0];
 
 	puyo1.Draw(mResourceMgr);
 	puyo0.Draw(mResourceMgr);
 }
-void CPlayer::setPuyo(const Puyo* puyo) const {
-	Puyo p;
-	p.type = puyo->type;
-
-	mPuyoField->set(&p, (int)std::floor((double)(puyo->point.y - mDefaultPoint.at(PointName::field).y) / mPuyoSize), (int)std::floor((double)(puyo->point.x - mDefaultPoint.at(PointName::field).x) / mPuyoSize));
+void CPlayer::setPuyo(std::unique_ptr<const Puyo> puyo) const {
+	mPuyoField->set(*puyo, (int)std::floor((double)(puyo->point.y - mDefaultPoint.at(PointName::field).y) / mPuyoSize), (int)std::floor((double)(puyo->point.x - mDefaultPoint.at(PointName::field).x) / mPuyoSize));
 }

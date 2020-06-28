@@ -1,55 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Opening">
-      <UniqueIdentifier>{b460de27-8461-4ce8-935c-fca9c94859e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{acd0333f-7bd7-4b2e-8c4d-845f6e05bce1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{835c9aac-436c-4612-8e7a-6e22904a0a6d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="others">
       <UniqueIdentifier>{43c3f56d-8c33-4344-8c5e-92630ba30db4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PuyoPuyo">
+      <UniqueIdentifier>{568035d0-6871-4e03-8d27-e15f33120269}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{4558426c-28c6-46aa-b782-213d33e58db7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Opening">
+      <UniqueIdentifier>{b460de27-8461-4ce8-935c-fca9c94859e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mgr">
+      <UniqueIdentifier>{acd0333f-7bd7-4b2e-8c4d-845f6e05bce1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Opening\Detail">
+      <UniqueIdentifier>{1a17c32b-5923-4c13-af0b-01f4aa9de866}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Obj">
+      <UniqueIdentifier>{ea98925c-1e22-4648-8e09-834816f84668}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Opening.h">
-      <Filter>Opening</Filter>
+      <Filter>Scene\Opening</Filter>
     </ClInclude>
     <ClInclude Include="CSceneMgr.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="CBaseScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="CSceneTask.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="ISceneChanger.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Game</Filter>
+      <Filter>Mgr</Filter>
     </ClInclude>
     <ClInclude Include="key.h">
       <Filter>others</Filter>
-    </ClInclude>
-    <ClInclude Include="CPuyoField.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game_define.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayer.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="CResourceMgr.h">
-      <Filter>others</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayer_CFall.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="function.h">
       <Filter>others</Filter>
@@ -57,52 +39,62 @@
     <ClInclude Include="CBright.h">
       <Filter>others</Filter>
     </ClInclude>
+    <ClInclude Include="CBasePuyopuyo.h">
+      <Filter>PuyoPuyo</Filter>
+    </ClInclude>
+    <ClInclude Include="Opening.logo.h">
+      <Filter>Scene\Opening\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="names.h">
+      <Filter>Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CMgr.h">
+      <Filter>Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CObjMgr.h">
+      <Filter>Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ResMgr.h">
+      <Filter>Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CObj.h">
+      <Filter>Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects.h">
+      <Filter>Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Opening.title.h">
+      <Filter>Scene\Opening\Detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Opening.cpp">
-      <Filter>Opening</Filter>
-    </ClCompile>
-    <ClCompile Include="CBaseScene.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Scene\Opening</Filter>
     </ClCompile>
     <ClCompile Include="CSceneMgr.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="ISceneChanger.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Mgr</Filter>
     </ClCompile>
     <ClCompile Include="key.cpp">
-      <Filter>others</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>others</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="CPuyoField.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="CPlayer.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="CResourceMgr.cpp">
       <Filter>others</Filter>
     </ClCompile>
     <ClCompile Include="function.cpp">
       <Filter>others</Filter>
     </ClCompile>
-    <ClCompile Include="CPlayer_CFall_1.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="CPlayer_CFall_2.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="CBright.cpp">
       <Filter>others</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClCompile Include="Opening.logo.cpp">
+      <Filter>Scene\Opening\Detail</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgr.cpp">
+      <Filter>Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Objects.cpp">
+      <Filter>Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Opening.title.cpp">
+      <Filter>Scene\Opening\Detail</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
