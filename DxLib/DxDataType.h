@@ -2,32 +2,34 @@
 // 
 // 		ＤＸライブラリ		データタイプ定義ヘッダファイル
 // 
-// 				Ver 3.16d
+// 				Ver 3.22a
 // 
 // -------------------------------------------------------------------------------
 
-#ifndef __DXDATATYPE_H__
-#define __DXDATATYPE_H__
+#ifndef DX_DATATYPE_H
+#define DX_DATATYPE_H
 
 // インクルード ------------------------------------------------------------------
 #include "DxCompileConfig.h"
 #include <stdio.h>
 
-#ifdef __WINDOWS__
+#ifdef WINDOWS_DESKTOP_OS
 #include "DxDataTypeWin.h"
-#endif
-
-#ifdef __psp2__
-#include "DxDataTypePSVita.h"
-#endif
-
-#ifdef __ORBIS__
-#include "DxDataTypePS4.h"
-#endif
+#endif // WINDOWS_DESKTOP_OS
 
 #ifdef __ANDROID__
 #include "DxDataTypeAndroid.h"
-#endif
+#endif // __ANDROID__
+
+#ifdef __APPLE__
+    #include "TargetConditionals.h"
+    #if TARGET_OS_IPHONE
+		#include "DxDataTypeiOS.h"
+	#endif
+#endif // __APPLE__
+
+
+
 
 #ifndef DX_NON_NAMESPACE
 
@@ -43,6 +45,18 @@ namespace DxLib
 	( Dest ).top    = Top ;\
 	( Dest ).right  = Right ;\
 	( Dest ).bottom = Bottom ;
+
+#ifdef USE_ULL
+#define ULL_NUM( x )				( x##ULL )
+#define LL_NUM( x )					( x##LL  )
+#define ULL_PARAM( x )				x##ULL
+#define LL_PARAM( x )				x##LL
+#else
+#define ULL_NUM( x )				( ( ULONGLONG )x )
+#define LL_NUM( x )					(  ( LONGLONG )x )
+#define ULL_PARAM( x )				x
+#define LL_PARAM( x )				x
+#endif
 
 // 構造体定義 --------------------------------------------------------------------
 
@@ -64,4 +78,4 @@ struct RGBCOLOR
 
 #endif // DX_NON_NAMESPACE
 
-#endif // __DXDATATYPE_H__
+#endif // DX_DATATYPE_H

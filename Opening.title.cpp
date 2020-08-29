@@ -1,48 +1,27 @@
+#include "Opening.title.h"
+#include "CTransFadein.h"
+#include "Opening.logo.h"
+#include "key.h"
 #include <DxLib.h>
 #include <assert.h>
-#include "Opening.title.h"
-#include "CBright.h"
-#include "key.h"
-#include "Opening.logo.h"
 
 using namespace Opening;
 
-TitleMgr::TitleMgr(std::weak_ptr<ISceneChanger> sceneChanger)
-	:CObjMgr(sceneChanger) {
+Title::Title(std::weak_ptr<ISceneChanger> sceneChanger)
+    : CScene(sceneChanger)
+    , mTitleMovie(std::make_shared<MovieTitle>()) {
+	addToDrawList(mTitleMovie);
 }
-void TitleMgr::init() {
-	if (!mTitleMovie) {
-		mTitleMovie = std::make_shared<Object::TitleMovie>();
-	}
-
-	mTitleMovie->init();
-	CBright::getInstance().SetDrawBright(255, 255, 255);
-	mCounter = 0;
-}
-void TitleMgr::deinit() {
-	CBright::getInstance().SetDrawBright(255, 255, 255);
-}
-void TitleMgr::update() {
+void Title::update() {
 	switch (mCounter) {
 	case 0:
-		addToDrawList(mTitleMovie);
-		mCounter++;
-	case 1:
 		if (KeyStateOf(KEY_INPUT_RETURN) == 1) {
 			mCounter++;
-		} else if (mTitleMovie->update() == Object::CMovieObj::STATUS::END) {
+		} else if (mTitleMovie->update()) {
 			// ムービー終了
-			mSceneChanger.lock()->ChangeScene(typeid(Opening::LogoMgr));
-		}
-		break;
-	case 2:
-		if (CBright::getInstance().Fade(0, 0, 0, 30) == 0) {
-			// 輝度を最大に戻す
-			CBright::getInstance().SetDrawBright(255, 255, 255);
-
-			// シーンの変更
-//			mSceneChanger->ChangeScene(std::make_unique<CGame>(mSceneChanger));
-			assert(0);
+			mSceneChanger.lock()->ChangeScene(
+			    nullptr, std::make_shared<CTransFadein>(30, CTransFadein::Mode::Fix),
+			    std::make_shared<Opening::MyLogo>(mSceneChanger));
 		}
 		break;
 	}

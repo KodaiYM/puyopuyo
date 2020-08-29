@@ -2,7 +2,7 @@
 //
 //		ＤＸライブラリ　コンパイルコンフィグヘッダファイル
 //
-//				Ver 3.16d
+//				Ver 3.22a
 //
 // ----------------------------------------------------------------------------
 
@@ -13,8 +13,8 @@
 */
 
 // 多重インクルード防止用マクロ
-#ifndef __DXCOMPILECONFIG_H__
-#define __DXCOMPILECONFIG_H__
+#ifndef DXCOMPILECONFIG_H
+#define DXCOMPILECONFIG_H
 
 // スタティックライブラリ生成時ライブラリ機能制限用定義 -----------------------
 
@@ -39,7 +39,7 @@
 #define DX_THREAD_SAFE_NETWORK_ONLY
 
 // ＤＸアーカイブがいらない方は次のコメントを外してください
-// ( ＤＸアーカイブを無効にすると、ＤＸアーカイブを内部で使っている関係上 DX_NON_MODEL と DX_NON_FILTER と DX_NON_NORMAL_DRAW_SHADER も有効になります )
+// ( ＤＸアーカイブを無効にすると、ＤＸアーカイブを内部で使っている関係上 DX_NON_MODEL と DX_NON_FILTER と DX_NON_MOVIE と DX_NON_NORMAL_DRAW_SHADER も有効になります )
 //#define DX_NON_DXA
 
 // ムービー機能がいらない方は次のコメントを外してください
@@ -81,6 +81,9 @@
 // DirectShow を使用した動画ファイルのデコードを行わない場合は次のコメントをはずしてください
 //#define DX_NON_DSHOW_MOVIE
 
+// Media Foundation を使用した動画ファイルのデコードを行わない場合は次のコメントをはずしてください
+//#define DX_NON_MEDIA_FOUNDATION
+
 // キーボードの基本的な入力機能以外はいらない方は次のコメントを外してください
 //#define DX_NON_KEYEX
 
@@ -105,6 +108,9 @@
 // ※DxUseCLib.lib も再コンパイルする必要があります
 //#define DX_NON_OPUS
 
+// ASIO を使用しない方は次のコメントをはずしてください
+//#define DX_NON_ASIO
+
 // 乱数発生器に Mersenne Twister を使用しない場合は以下のコメントを外して下さい
 // ※DxUseCLib.lib も再コンパイルする必要があります
 //#define DX_NON_MERSENNE_TWISTER
@@ -123,7 +129,7 @@
 //#define DX_LOAD_FBX_MODEL
 
 // ビープ音機能がいらない方は次のコメントを外してください
-#define DX_NON_BEEP
+//#define DX_NON_BEEP
 
 // タスクスイッチをＯＦＦにする機能がいらない方は次のコメントを外してください
 // ( タスクスイッチＯＦＦ機能は使用不可です )
@@ -168,11 +174,24 @@
 // 軽量バージョンのＤＸライブラリを生成する場合は次のコメントを外してください
 //#define DX_LIB_LITEVER
 
-#if !defined( __ANDROID__ ) && !defined( __psp2__ ) && !defined( __ORBIS__ )
-#define __WINDOWS__
+// コンパイル済みのシェーダーバイナリを使用せず、シェーダーコードの実行時コンパイルを利用する場合は次のコメントを外してください
+//#define DX_NON_SHADERCODE_BINARY
+
+// Live2D Cubism 4 関連の機能を使用しない場合は次のコメントを外してください
+//#define DX_NON_LIVE2D_CUBISM4
+
+#ifndef __APPLE__
+#ifndef __ANDROID__
+	#define WINDOWS_DESKTOP_OS
+#endif // __ANDROID__
+#endif // __APPLE__
+
+#if defined( DX_GCC_COMPILE ) || defined( __ANDROID__ ) || defined( __APPLE__ ) || defined( BC2_COMPILER )
+	#define USE_ULL
 #endif
 
-#ifndef __WINDOWS__
+
+#ifndef WINDOWS_DESKTOP_OS
 	#ifndef DX_NON_BEEP
 		#define DX_NON_BEEP
 	#endif // DX_NON_BEEP
@@ -185,17 +204,17 @@
 	#ifndef DX_NON_DSHOW_MOVIE
 		#define DX_NON_DSHOW_MOVIE
 	#endif // DX_NON_DSHOW_MOVIE
-#endif // __WINDOWS__
+	#ifndef DX_NON_MEDIA_FOUNDATION
+		#define DX_NON_MEDIA_FOUNDATION
+	#endif // DX_NON_MEDIA_FOUNDATION
+#endif // WINDOWS_DESKTOP_OS
 
-#if defined( __ANDROID__ )
-	#undef DX_THREAD_SAFE_NETWORK_ONLY
-#endif
-
-#if defined( __psp2__ ) || defined( __ORBIS__ ) || defined( __ANDROID__ )
-#define DX_NON_2DDRAW
+#if defined( __ANDROID__ ) || defined( __APPLE__ )
+//#define DX_NON_2DDRAW
 #define DX_NON_ACM
 #define DX_NON_DSHOW_MP3
 #define DX_NON_DSHOW_MOVIE
+#define DX_NON_MEDIA_FOUNDATION
 #define DX_NON_KEYEX
 #define DX_NON_INPUTSTRING
 #define DX_NON_NETWORK
@@ -203,6 +222,9 @@
 #define DX_NON_DIRECT3D11
 #define DX_NON_DIRECT3D9
 #endif
+
+
+
 
 #ifdef DX_LIB_LITEVER
 #define DX_NON_ACM
@@ -213,24 +235,55 @@
 #define DX_NON_MASK
 #define DX_NON_JPEGREAD
 #define DX_NON_PNGREAD
+#define DX_NON_TIFFREAD
 #define DX_NON_BEEP
 #define DX_NON_OGGVORBIS
+#define DX_NON_OGGTHEORA
 #define DX_NON_OPUS
 #define DX_NON_MODEL
+#define DX_NON_SHADERCODE_BINARY
 #endif
 
 #ifdef DX_NON_GRAPHICS
-	#define DX_NON_MOVIE
-	#define DX_NON_FILTER
-	#define DX_NON_2DDRAW
-	#define DX_NON_MASK
-	#define DX_NON_MODEL
-	#define DX_NON_BULLET_PHYSICS
-	#define DX_NON_PRINTF_DX
-	#define DX_NON_KEYEX
-	#define DX_NON_DIRECT3D11
-	#define DX_NON_DIRECT3D9
-	#define DX_NOTUSE_DRAWFUNCTION
+	#ifndef DX_NON_FONT
+		#define DX_NON_FONT
+	#endif
+	#ifndef DX_NON_MOVIE
+		#define DX_NON_MOVIE
+	#endif
+	#ifndef DX_NON_FILTER
+		#define DX_NON_FILTER
+	#endif
+	#ifndef DX_NON_2DDRAW
+		#define DX_NON_2DDRAW
+	#endif
+	#ifndef DX_NON_MASK
+		#define DX_NON_MASK
+	#endif
+	#ifndef DX_NON_MODEL
+		#define DX_NON_MODEL
+	#endif
+	#ifndef DX_NON_BULLET_PHYSICS
+		#define DX_NON_BULLET_PHYSICS
+	#endif
+	#ifndef DX_NON_PRINTF_DX
+		#define DX_NON_PRINTF_DX
+	#endif
+	#ifndef DX_NON_KEYEX
+		#define DX_NON_KEYEX
+	#endif
+	#ifndef DX_NON_DIRECT3D11
+		#define DX_NON_DIRECT3D11
+	#endif
+	#ifndef DX_NON_DIRECT3D9
+		#define DX_NON_DIRECT3D9
+	#endif
+	#ifndef DX_NOTUSE_DRAWFUNCTION
+		#define DX_NOTUSE_DRAWFUNCTION
+	#endif
+	#ifndef DX_NON_LIVE2D_CUBISM4
+		#define DX_NON_LIVE2D_CUBISM4
+	#endif
 #endif // DX_NON_GRAPHICS
 
 #ifdef DX_NON_SOUND
@@ -252,6 +305,9 @@
 	#ifndef DX_NON_DSHOW_MOVIE
 		#define DX_NON_DSHOW_MOVIE
 	#endif
+	#ifndef DX_NON_MEDIA_FOUNDATION
+		#define DX_NON_MEDIA_FOUNDATION
+	#endif
 	#ifndef DX_NON_MOVIE
 		#define DX_NON_MOVIE
 	#endif
@@ -272,13 +328,6 @@
 	#endif
 #endif
 
-#ifdef DX_NON_MOVIE
-	#ifndef DX_NON_OGGTHEORA
-		#define DX_NON_OGGTHEORA
-	#endif
-#endif
-
-
 #ifdef DX_NON_DXA
 	#ifndef DX_NON_NORMAL_DRAW_SHADER
 		#define DX_NON_NORMAL_DRAW_SHADER
@@ -289,6 +338,18 @@
 	#ifndef DX_NON_FILTER
 		#define DX_NON_FILTER
 	#endif
+	#ifndef DX_NON_MOVIE
+		#define DX_NON_MOVIE
+	#endif
+#endif
+
+#ifdef DX_NON_MOVIE
+	#ifndef DX_NON_OGGTHEORA
+		#define DX_NON_OGGTHEORA
+	#endif
+	#ifndef DX_NON_MEDIA_FOUNDATION
+		#define DX_NON_MEDIA_FOUNDATION
+	#endif // DX_NON_MEDIA_FOUNDATION
 #endif
 
 #ifdef DX_NON_INPUT
@@ -310,18 +371,29 @@
 	#ifndef DX_NON_OGGTHEORA
 		#define DX_NON_OGGTHEORA
 	#endif
+	#ifndef DX_NON_OPUS
+		#define DX_NON_OPUS
+	#endif
 #endif
 
-#if defined( _WIN64 ) || defined( __ORBIS__ )
-	#define __64BIT__
+
+#if defined( _WIN64 ) || defined( __LP64__ )
+	#ifndef PLATFORM_64BIT
+		#define PLATFORM_64BIT
+	#endif
 #endif
 
-#if defined( _WIN64 ) || defined( __psp2__ ) || defined( __ORBIS__ ) || defined( __ANDROID__ )
+
+
+#if defined( _WIN64 ) || defined( __ANDROID__ ) || defined( __APPLE__ )
 	#ifndef DX_NON_INLINE_ASM
 		#define DX_NON_INLINE_ASM
 	#endif
 #endif
 
+
+
+
 #include "DxDataType.h"
 
-#endif // __DXCOMPILECONFIG_H__
+#endif // DXCOMPILECONFIG_H

@@ -1,19 +1,17 @@
 #pragma once
 
-#include "CObjMgr.h"
-#include "Objects.h"
+#include "CScene.h"
+#include "MovieTitle.h"
 
 namespace Opening {
-	class TitleMgr final :public CObjMgr {
-	private:
-		int mCounter;
-		std::shared_ptr<Object::TitleMovie> mTitleMovie;
+class Title final : public CScene {
+private:
+	int                         mCounter = 0;
+	std::shared_ptr<MovieTitle> mTitleMovie;
 
-	public:
-		TitleMgr(std::weak_ptr<ISceneChanger> sceneChanger);
+public:
+	Title(std::weak_ptr<ISceneChanger> sceneChanger);
 
-		virtual void init() override;
-		virtual void deinit() override;
-		virtual void update() override;
-	};
-}
+	virtual void update() override;
+};
+} // namespace Opening

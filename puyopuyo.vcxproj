@@ -92,6 +92,7 @@
       <AdditionalIncludeDirectories>./DxLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,6 +108,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,6 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>./DxLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,6 +147,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,29 +159,33 @@
   <ItemGroup>
     <ClInclude Include="CBasePuyopuyo.h" />
     <ClInclude Include="CBright.h" />
-    <ClInclude Include="CMgr.h" />
-    <ClInclude Include="CObj.h" />
-    <ClInclude Include="CObjMgr.h" />
+    <ClInclude Include="CTransFadein.h" />
+    <ClInclude Include="CTransFadeout.h" />
+    <ClInclude Include="ISceneChanger.h" />
+    <ClInclude Include="CScene.h" />
+    <ClInclude Include="GraphicLoading.h" />
+    <ClInclude Include="GraphicLogo.h" />
+    <ClInclude Include="GraphicSpriteStudio.h" />
+    <ClInclude Include="ITrans.h" />
+    <ClInclude Include="Movie.h" />
+    <ClInclude Include="MovieTitle.h" />
     <ClInclude Include="Opening.title.h" />
-    <ClInclude Include="ResMgr.h" />
+    <ClInclude Include="Graphic.h" />
     <ClInclude Include="CSceneMgr.h" />
     <ClInclude Include="function.h" />
-    <ClInclude Include="names.h" />
-    <ClInclude Include="Objects.h" />
     <ClInclude Include="Opening.logo.h" />
     <ClInclude Include="key.h" />
-    <ClInclude Include="Opening.h" />
+    <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CBright.cpp" />
-    <ClCompile Include="Objects.cpp" />
+    <ClCompile Include="CTransFadein.cpp" />
+    <ClCompile Include="CTransFadeout.cpp" />
     <ClCompile Include="Opening.title.cpp" />
-    <ClCompile Include="ResMgr.cpp" />
     <ClCompile Include="CSceneMgr.cpp" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="key.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Opening.cpp" />
     <ClCompile Include="Opening.logo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -16,17 +16,14 @@
     <Filter Include="Mgr">
       <UniqueIdentifier>{acd0333f-7bd7-4b2e-8c4d-845f6e05bce1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Opening\Detail">
-      <UniqueIdentifier>{1a17c32b-5923-4c13-af0b-01f4aa9de866}</UniqueIdentifier>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{c386fa01-903e-4e09-8bea-bb20974ea9f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Obj">
-      <UniqueIdentifier>{ea98925c-1e22-4648-8e09-834816f84668}</UniqueIdentifier>
+    <Filter Include="Mgr\Transition">
+      <UniqueIdentifier>{e4da9d3b-b046-44f1-81fb-ea893f17dfb3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Opening.h">
-      <Filter>Scene\Opening</Filter>
-    </ClInclude>
     <ClInclude Include="CSceneMgr.h">
       <Filter>Mgr</Filter>
     </ClInclude>
@@ -42,35 +39,50 @@
     <ClInclude Include="CBasePuyopuyo.h">
       <Filter>PuyoPuyo</Filter>
     </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicLoading.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicLogo.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieTitle.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Movie.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicSpriteStudio.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="CScene.h">
+      <Filter>Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ITrans.h">
+      <Filter>Mgr\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="CTransFadein.h">
+      <Filter>Mgr\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="ISceneChanger.h">
+      <Filter>Mgr\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="CTransFadeout.h">
+      <Filter>Mgr\Transition</Filter>
+    </ClInclude>
     <ClInclude Include="Opening.logo.h">
-      <Filter>Scene\Opening\Detail</Filter>
-    </ClInclude>
-    <ClInclude Include="names.h">
-      <Filter>Mgr</Filter>
-    </ClInclude>
-    <ClInclude Include="CMgr.h">
-      <Filter>Mgr</Filter>
-    </ClInclude>
-    <ClInclude Include="CObjMgr.h">
-      <Filter>Mgr</Filter>
-    </ClInclude>
-    <ClInclude Include="ResMgr.h">
-      <Filter>Mgr</Filter>
-    </ClInclude>
-    <ClInclude Include="CObj.h">
-      <Filter>Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects.h">
-      <Filter>Obj</Filter>
+      <Filter>Scene\Opening</Filter>
     </ClInclude>
     <ClInclude Include="Opening.title.h">
-      <Filter>Scene\Opening\Detail</Filter>
+      <Filter>Scene\Opening</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Opening.cpp">
-      <Filter>Scene\Opening</Filter>
-    </ClCompile>
     <ClCompile Include="CSceneMgr.cpp">
       <Filter>Mgr</Filter>
     </ClCompile>
@@ -83,18 +95,18 @@
     <ClCompile Include="CBright.cpp">
       <Filter>others</Filter>
     </ClCompile>
-    <ClCompile Include="Opening.logo.cpp">
-      <Filter>Scene\Opening\Detail</Filter>
-    </ClCompile>
-    <ClCompile Include="ResMgr.cpp">
-      <Filter>Mgr</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Objects.cpp">
-      <Filter>Obj</Filter>
+    <ClCompile Include="CTransFadeout.cpp">
+      <Filter>Mgr\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="CTransFadein.cpp">
+      <Filter>Mgr\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="Opening.logo.cpp">
+      <Filter>Scene\Opening</Filter>
     </ClCompile>
     <ClCompile Include="Opening.title.cpp">
-      <Filter>Scene\Opening\Detail</Filter>
+      <Filter>Scene\Opening</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

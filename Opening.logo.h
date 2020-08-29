@@ -1,53 +1,30 @@
 #pragma once
 
-#include "CSceneMgr.h"
-#include "CObjMgr.h"
-#include "Objects.h"
+#include "CScene.h"
+#include "GraphicLogo.h"
+#include "GraphicSpriteStudio.h"
 
 namespace Opening {
-	class MyLogo;
-	class SSLogo;
+class MyLogo final : public CScene {
+private:
+	int                                mCounter = 0;
+	const std::shared_ptr<GraphicLogo> mMyLogo;
 
-	class LogoMgr final : public CSceneMgr {
-	private:
-		std::shared_ptr<MyLogo> mMyLogo;
-		std::shared_ptr<SSLogo> mSSLogo;
+public:
+	MyLogo(std::weak_ptr<ISceneChanger> sceneChanger);
 
-	public:
-		LogoMgr(std::weak_ptr<ISceneChanger> sceneChanger);
+	virtual void update() override;
+};
+class SSLogo final : public CScene {
+private:
+	int mCounter           = 0;
+	int mSpriteStudioIndex = 0;
 
-		virtual void init() override;
-		virtual void deinit() override;
-		virtual void update() override;
-		virtual void ChangeScene(const std::type_info& nextScene) override;
-	};
+	const std::shared_ptr<GraphicSpriteStudio> mSS;
 
-	class MyLogo final : public CObjMgr {
-	private:
-		int mCounter;
-		int mWaitCounter;
+public:
+	SSLogo(std::weak_ptr<ISceneChanger> sceneChanger);
 
-		std::shared_ptr<Object::MyLogo> mMyLogo;
-
-	public:
-		MyLogo(std::weak_ptr<ISceneChanger> sceneChanger);
-
-		virtual void init() override;
-		virtual void deinit() override;
-		virtual void update() override;
-	};
-	class SSLogo final : public CObjMgr {
-	private:
-		int mCounter;
-		int mSpriteStudioIndex;
-
-		std::shared_ptr<Object::SpriteStudio> mSS;
-
-	public:
-		SSLogo(std::weak_ptr<ISceneChanger> sceneChanger);
-
-		virtual void init() override;
-		virtual void deinit() override;
-		virtual void update() override;
-	};
-}
+	virtual void update() override;
+};
+} // namespace Opening

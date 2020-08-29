@@ -1,37 +1,22 @@
 #pragma once
-
+#include "ISceneChanger.h"
 #include <memory>
-#include "CMgr.h"
 
 // シーン管理の基底クラス
-class CSceneMgr :public CMgr, public ISceneChanger, public std::enable_shared_from_this<CSceneMgr> {
+class CSceneMgr final : public ISceneChanger,
+                        public std::enable_shared_from_this<CSceneMgr> {
 private:
-	std::shared_ptr<CMgr> mCurrentScene;
-
-protected:
-	CSceneMgr(std::weak_ptr<ISceneChanger> sceneChanger) :CMgr(sceneChanger) {}
-	std::shared_ptr<CMgr> getScene() const {
-		return mCurrentScene;
-	}
-	void setScene(std::shared_ptr<CMgr> nextScene) {
-		mCurrentScene = nextScene;
-	}
-
-	// シーンがあれば利用し、なければ生成して利用する
-	template<typename T>
-	void AssignScene(std::shared_ptr<T>& scene) {
-		if (!scene) {
-			scene = std::make_shared<T>(shared_from_this());
-		}
-		setScene(scene);
-	}
+	bool lasted  = false;
+	bool changed = false; // 直前の update が ChangeScene を呼んだ
+	std::shared_ptr<ITransEnd>   mHowToEnd;
+	std::shared_ptr<ITransStart> mHowToStart;
+	std::shared_ptr<CScene>      mCurrentScene;
+	std::shared_ptr<CScene>      mNextScene;
 
 public:
-	virtual ~CSceneMgr() {}
-
-	virtual void update() override = 0;
-	virtual void draw() const override final {
-		getScene()->draw();
-	}
-	virtual void ChangeScene(const std::type_info& nextScene) override = 0;
+	void         update();
+	void         draw() const;
+	virtual void ChangeScene(std::shared_ptr<ITransEnd> &&,
+	                         std::shared_ptr<ITransStart> &&,
+	                         std::shared_ptr<CScene> nextScene) override;
 };
