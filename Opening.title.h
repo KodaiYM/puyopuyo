@@ -6,7 +6,8 @@
 namespace Opening {
 class Title final : public CScene {
 private:
-	int                         mCounter = 0;
+	bool                        mMovieFinished = false;
+	int                         mCounter       = 0;
 	std::shared_ptr<MovieTitle> mTitleMovie;
 
 public:

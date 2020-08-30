@@ -157,31 +157,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BGMMenu.h" />
     <ClInclude Include="CBright.h" />
     <ClInclude Include="CTransDarkness.h" />
     <ClInclude Include="CTransFadein.h" />
     <ClInclude Include="CTransFadeout.h" />
+    <ClInclude Include="ImageMenu.h" />
     <ClInclude Include="ISceneChanger.h" />
     <ClInclude Include="CScene.h" />
-    <ClInclude Include="GraphicLoading.h" />
-    <ClInclude Include="GraphicLogo.h" />
-    <ClInclude Include="GraphicSpriteStudio.h" />
+    <ClInclude Include="ImageLoading.h" />
+    <ClInclude Include="ImageLogo.h" />
+    <ClInclude Include="ImageSpriteStudio.h" />
     <ClInclude Include="ITrans.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Movie.h" />
     <ClInclude Include="MovieTitle.h" />
     <ClInclude Include="Opening.Title.h" />
-    <ClInclude Include="Graphic.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="CSceneMgr.h" />
     <ClInclude Include="function.h" />
     <ClInclude Include="Opening.MyLogo.h" />
     <ClInclude Include="key.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Graphic.h" />
+    <ClInclude Include="BGM.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CBright.cpp" />
     <ClCompile Include="CTransDarkness.cpp" />
     <ClCompile Include="CTransFadein.cpp" />
     <ClCompile Include="CTransFadeout.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Opening.SSLogo.cpp" />
     <ClCompile Include="Opening.Title.cpp" />
     <ClCompile Include="CSceneMgr.cpp" />

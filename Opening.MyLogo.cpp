@@ -7,7 +7,7 @@ using namespace Opening;
 
 MyLogo::MyLogo(std::weak_ptr<ISceneChanger> sceneChanger)
     : CScene(sceneChanger)
-    , mMyLogo(std::make_shared<GraphicLogo>()) {
+    , mMyLogo(std::make_shared<ImageLogo>()) {
 	addToDrawList(mMyLogo);
 }
 void MyLogo::update() {

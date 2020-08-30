@@ -16,11 +16,26 @@
     <Filter Include="Transition">
       <UniqueIdentifier>{e4da9d3b-b046-44f1-81fb-ea893f17dfb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene\Menu">
+      <UniqueIdentifier>{a73f8726-8ec6-412a-9c91-8b69d27336eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Sound">
+      <UniqueIdentifier>{db58cca0-e9e4-4e5d-9eb5-3b165b6c3414}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource\Graphic">
+      <UniqueIdentifier>{25b75aee-5b0c-44df-9869-e53f00b6530e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Graphic\Movie">
+      <UniqueIdentifier>{edd216a0-83df-4654-a444-6412c1e4beef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Graphic\Image">
       <UniqueIdentifier>{d08fec9d-34cf-4807-89af-985612bc02f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource\Movie">
-      <UniqueIdentifier>{edd216a0-83df-4654-a444-6412c1e4beef}</UniqueIdentifier>
+    <Filter Include="Resource\Sound\BGM">
+      <UniqueIdentifier>{6c607580-9ded-4da9-8700-02f5e815916d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Sound\Effect">
+      <UniqueIdentifier>{375eab98-a5e2-425a-b0b1-03a48002bd9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -32,9 +47,6 @@
     </ClInclude>
     <ClInclude Include="CBright.h">
       <Filter>others</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="ITrans.h">
       <Filter>Transition</Filter>
@@ -63,23 +75,38 @@
     <ClInclude Include="Opening.Title.h">
       <Filter>Scene\Opening</Filter>
     </ClInclude>
+    <ClInclude Include="Movie.h">
+      <Filter>Resource\Graphic\Movie</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieTitle.h">
+      <Filter>Resource\Graphic\Movie</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Scene\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Resource\Graphic\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageLoading.h">
+      <Filter>Resource\Graphic\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageLogo.h">
+      <Filter>Resource\Graphic\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageMenu.h">
+      <Filter>Resource\Graphic\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageSpriteStudio.h">
+      <Filter>Resource\Graphic\Image</Filter>
+    </ClInclude>
     <ClInclude Include="Graphic.h">
       <Filter>Resource\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Movie.h">
-      <Filter>Resource\Movie</Filter>
+    <ClInclude Include="BGM.h">
+      <Filter>Resource\Sound\BGM</Filter>
     </ClInclude>
-    <ClInclude Include="MovieTitle.h">
-      <Filter>Resource\Movie</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicSpriteStudio.h">
-      <Filter>Resource\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicLogo.h">
-      <Filter>Resource\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicLoading.h">
-      <Filter>Resource\Graphic</Filter>
+    <ClInclude Include="BGMMenu.h">
+      <Filter>Resource\Sound\BGM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +140,9 @@
     </ClCompile>
     <ClCompile Include="Opening.Title.cpp">
       <Filter>Scene\Opening</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Scene\Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

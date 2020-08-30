@@ -6,7 +6,7 @@ using namespace Opening;
 
 SSLogo::SSLogo(std::weak_ptr<ISceneChanger> sceneChanger)
     : CScene(sceneChanger)
-    , mSS(std::make_shared<GraphicSpriteStudio>()) {
+    , mSS(std::make_shared<ImageSpriteStudio>()) {
 	addToDrawList(mSS);
 }
 void SSLogo::update() {

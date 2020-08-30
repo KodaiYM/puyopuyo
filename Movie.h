@@ -1,23 +1,21 @@
 #pragma once
 
-#include "Resource.h"
+#include "Graphic.h"
 #include <DxLib.h>
 #include <Shlwapi.h>
-#include <assert.h>
+#include <cassert>
 #include <exception>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <unordered_map>
-#include <vector>
 #pragma comment(lib, "shlwapi.lib")
 using namespace std::string_literals;
 
-// 1つのグラフィックリソースのクラス
+// 1つのムービーリソースのクラス
 template <class Derived>
-class Movie : public Resource {
+class Movie : public Graphic {
 private:
-	static int LoadGraph_(const char *filename) {
+	static int LoadSound_(const char *filename) {
 		/* ファイルの存在確認 */
 		std::ifstream ifs(filename);
 		if (!ifs) {
@@ -70,7 +68,7 @@ Movie<Derived>::Movie() {
 		SetUseASyncLoadFlag(TRUE);
 
 		try {
-			handle = LoadGraph_(path.c_str());
+			handle = LoadSound_(path.c_str());
 			SeekMovieToGraphToFrame(handle, 0);
 		} catch (std::ios_base::failure ios_f) {
 			// よく分からないが読み込み失敗
