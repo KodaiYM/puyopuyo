@@ -1,6 +1,7 @@
-#include "Opening.title.h"
+#include "Opening.Title.h"
+#include "CTransDarkness.h"
 #include "CTransFadein.h"
-#include "Opening.logo.h"
+#include "Opening.MyLogo.h"
 #include "key.h"
 #include <DxLib.h>
 #include <assert.h>
@@ -20,8 +21,14 @@ void Title::update() {
 		} else if (mTitleMovie->update()) {
 			// ムービー終了
 			mSceneChanger.lock()->ChangeScene(
-			    nullptr, std::make_shared<CTransFadein>(30, CTransFadein::Mode::Fix),
+			    std::make_shared<CTransDarkness>(500, CTransDarkness::Mode::Fix),
+			    std::make_shared<CTransFadein>(30, CTransFadein::Mode::Fix),
 			    std::make_shared<Opening::MyLogo>(mSceneChanger));
+		}
+		break;
+	case 1:
+		if (KeyStateOf(KEY_INPUT_RETURN) == 1) {
+			mCounter--;
 		}
 		break;
 	}

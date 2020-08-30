@@ -7,7 +7,7 @@
 
 #include "CSceneMgr.h"
 #include "CTransFadein.h"
-#include "Opening.logo.h"
+#include "Opening.MyLogo.h"
 #include <DxLib.h>
 //#include "Game.h" /* デバッグ中 */
 #include "key.h"

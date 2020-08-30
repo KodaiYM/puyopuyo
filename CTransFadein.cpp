@@ -6,18 +6,22 @@
 
 CTransFadein::CTransFadein(int speed, Mode mode)
     : mSpeed(speed)
-    , mMode(mode) {
-	CBright::getInstance().SetDrawBright(0, 0, 0);
-}
+    , mMode(mode) {}
 bool CTransFadein::update(const std::weak_ptr<CScene> &scene) {
+	// 初めての update の時
+	if (mFirstUpdate) {
+		CBright::getInstance().SetDrawBright(0, 0, 0);
+		mFirstUpdate = false;
+	}
+
 	switch (mMode) {
-	case Mode::Fix:
+	case Mode::Fix: // update せず固定の時
 		if (0 == mCounter) {
 			scene.lock()->update();
 			++mCounter;
 		}
 		break;
-	case Mode::Update:
+	case Mode::Update: // update する時
 		scene.lock()->update();
 		break;
 	default:
@@ -29,6 +33,9 @@ bool CTransFadein::update(const std::weak_ptr<CScene> &scene) {
 		std::exit(EXIT_FAILURE);
 		break;
 	}
+
+	// フェードする。
+	// フェード終了時 true
 	return CBright::getInstance().Fade(255, 255, 255, mSpeed) == 0;
 }
 void CTransFadein::draw(const std::weak_ptr<CScene> &scene) const {

@@ -157,8 +157,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CBasePuyopuyo.h" />
     <ClInclude Include="CBright.h" />
+    <ClInclude Include="CTransDarkness.h" />
     <ClInclude Include="CTransFadein.h" />
     <ClInclude Include="CTransFadeout.h" />
     <ClInclude Include="ISceneChanger.h" />
@@ -169,24 +169,29 @@
     <ClInclude Include="ITrans.h" />
     <ClInclude Include="Movie.h" />
     <ClInclude Include="MovieTitle.h" />
-    <ClInclude Include="Opening.title.h" />
+    <ClInclude Include="Opening.Title.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="CSceneMgr.h" />
     <ClInclude Include="function.h" />
-    <ClInclude Include="Opening.logo.h" />
+    <ClInclude Include="Opening.MyLogo.h" />
     <ClInclude Include="key.h" />
     <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CBright.cpp" />
+    <ClCompile Include="CTransDarkness.cpp" />
     <ClCompile Include="CTransFadein.cpp" />
     <ClCompile Include="CTransFadeout.cpp" />
-    <ClCompile Include="Opening.title.cpp" />
+    <ClCompile Include="Opening.SSLogo.cpp" />
+    <ClCompile Include="Opening.Title.cpp" />
     <ClCompile Include="CSceneMgr.cpp" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="key.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Opening.logo.cpp" />
+    <ClCompile Include="Opening.MyLogo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Opening.SSLogo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

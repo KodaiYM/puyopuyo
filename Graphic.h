@@ -207,5 +207,5 @@ void Graphic<Derived>::draw() const {
 		Sleep(1);
 	}
 
-	DrawGraph(x, y, *current_handle, FALSE);
+	DrawGraph(x, y, *current_handle, TRUE);
 }

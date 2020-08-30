@@ -9,13 +9,13 @@ public:
 	};
 
 private:
-	int        mCounter = 0;
+	bool       mFirstUpdate = true; // 初めてのupdate
+	int        mCounter     = 0;
 	const int  mSpeed;
 	const Mode mMode;
 
 public:
 	/**
-	 * scene: フェードインするシーン
 	 * speed: フェードインするフレーム数
 	 * mode:  フェードイン方法
 	 */

@@ -7,14 +7,12 @@
 CTransFadeout::CTransFadeout(int speed, Mode mode)
     : mSpeed(speed)
     , mMode(mode) {}
-CTransFadeout::~CTransFadeout() {
-	CBright::getInstance().SetDrawBright(255, 255, 255);
-}
+CTransFadeout::~CTransFadeout() {}
 bool CTransFadeout::update(const std::weak_ptr<CScene> &scene) {
 	switch (mMode) {
-	case Mode::Fix:
+	case Mode::Fix: // update せず固定の時
 		break;
-	case Mode::Update:
+	case Mode::Update: // update する時
 		scene.lock()->update();
 		break;
 	default:
@@ -26,6 +24,9 @@ bool CTransFadeout::update(const std::weak_ptr<CScene> &scene) {
 		std::exit(EXIT_FAILURE);
 		break;
 	}
+
+	// フェード処理をする。
+	// フェード終了時 true
 	return CBright::getInstance().Fade(0, 0, 0, mSpeed) == 0;
 }
 void CTransFadeout::draw(const std::weak_ptr<CScene> &scene) const {

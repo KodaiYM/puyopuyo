@@ -47,6 +47,7 @@ void CSceneMgr::update() {
 	if (mNextScene) {
 		mCurrentScene = std::move(mNextScene);
 		mNextScene.reset();
+		CBright::getInstance().SetDrawBright(255, 255, 255);
 	}
 
 	mCurrentScene->update();

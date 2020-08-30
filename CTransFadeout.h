@@ -9,12 +9,12 @@ public:
 	};
 
 private:
+	bool       mFirstUpdate = true; // 初めての update
 	const int  mSpeed;
 	const Mode mMode;
 
 public:
 	/**
-	 * scene: フェードアウトするシーン
 	 * speed: フェードアウトするフレーム数
 	 * mode:  フェードアウト方法
 	 */

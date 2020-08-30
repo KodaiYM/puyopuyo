@@ -1,5 +1,6 @@
-#include "Opening.logo.h"
+#include "Opening.MyLogo.h"
 #include "CTransFadeout.h"
+#include "Opening.SSLogo.h"
 #include "Opening.title.h"
 
 using namespace Opening;
@@ -18,18 +19,5 @@ void MyLogo::update() {
 			    nullptr, std::make_shared<SSLogo>(mSceneChanger));
 		}
 		++mCounter;
-	}
-}
-
-SSLogo::SSLogo(std::weak_ptr<ISceneChanger> sceneChanger)
-    : CScene(sceneChanger)
-    , mSS(std::make_shared<GraphicSpriteStudio>()) {
-	addToDrawList(mSS);
-}
-void SSLogo::update() {
-	if (mSS->update()) {
-		// ƒV[ƒ“‚Ì•ÏX
-		mSceneChanger.lock()->ChangeScene(
-		    nullptr, nullptr, std::make_shared<Opening::Title>(mSceneChanger));
 	}
 }
