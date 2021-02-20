@@ -1,12 +1,13 @@
-#include "Opening.Title.h"
+#include <DxLib.h>
+#include <cassert>
+
 #include "CTransDarkness.h"
 #include "CTransFadein.h"
 #include "CTransFadeout.h"
 #include "Menu.h"
 #include "Opening.MyLogo.h"
+#include "Opening.Title.h"
 #include "key.h"
-#include <DxLib.h>
-#include <assert.h>
 
 using namespace Opening;
 
@@ -15,6 +16,11 @@ Title::Title(std::weak_ptr<ISceneChanger> sceneChanger)
     , mTitleMovie(std::make_shared<MovieTitle>()) {
 	addToDrawList(mTitleMovie);
 }
+
+std::shared_ptr<ITransStart> Title::getTransStart() const {
+	return nullptr;
+}
+
 void Title::update() {
 	// まだムービーが終了していなければ
 	if (!mMovieFinished) {
@@ -30,15 +36,13 @@ void Title::update() {
 	case 0: // まだエンターを押していない
 		if (mMovieFinished) {
 			// ムービー終了
-			mSceneChanger.lock()->ChangeScene(
+			m_sceneChanger.lock()->ChangeScene(
 			    std::make_shared<CTransDarkness>(60, CTransDarkness::Mode::Fix),
-			    std::make_shared<CTransFadein>(30, CTransFadein::Mode::Fix),
-			    std::make_shared<Opening::MyLogo>(mSceneChanger));
+			    std::make_shared<Opening::MyLogo>(m_sceneChanger));
 		} else if (KeyStateOf(KEY_INPUT_RETURN) == 1) {
-			mSceneChanger.lock()->ChangeScene(
+			m_sceneChanger.lock()->ChangeScene(
 			    std::make_shared<CTransFadeout>(60, CTransFadeout::Mode::Update),
-			    std::make_shared<CTransFadein>(60, CTransFadein::Mode::Update),
-			    std::make_shared<Menu::SceneMenu>(mSceneChanger));
+			    std::make_shared<Menu::SceneMenu>(m_sceneChanger));
 			++mCounter;
 		}
 		break;

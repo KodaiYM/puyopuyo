@@ -1,41 +1,39 @@
 #pragma once
-#include "ISceneChanger.h"
-#include "Image.h"
-#include <cassert>
 #include <memory>
 #include <vector>
 
-// オブジェクトを直接操作する基底クラス
-class CScene : public std::enable_shared_from_this<CScene> {
-private:
-	std::vector<std::shared_ptr<const Graphic>> DrawList;
+#include "IGraphic.h"
+#include "ISceneChanger.h"
 
-protected:
-	std::weak_ptr<ISceneChanger> mSceneChanger;
-	CScene(std::weak_ptr<ISceneChanger> sceneChanger)
-	    : mSceneChanger(std::move(sceneChanger)) {}
+// オブジェクトを直接操作する基底クラス
+class CScene {
+#pragma region 外部公開
+public:
+	virtual void                         update()              = 0;
+	virtual std::shared_ptr<ITransStart> getTransStart() const = 0;
 
 public:
-	virtual ~CScene() {}
+	void draw() const;
+	void clearDrawList() noexcept;
+	void addToDrawList(std::shared_ptr<const IGraphic> task);
+	void eraseFromDrawList(std::shared_ptr<const IGraphic> task);
 
-	virtual void update() = 0;
-	virtual void draw() const final {
-		for (auto &task : DrawList) {
-			task->draw();
-		}
-	}
-	void clearDrawList() {
-		DrawList.clear();
-	}
-	void addToDrawList(std::shared_ptr<const Graphic> task) {
-		if (std::find(DrawList.begin(), DrawList.end(), task) != DrawList.end()) {
-			assert("task is already in DrawList.");
-		}
-		DrawList.push_back(task);
-	}
-	void eraseFromDrawList(std::shared_ptr<const Graphic> task) {
-		if (std::find(DrawList.begin(), DrawList.end(), task) == DrawList.end()) {
-			assert("task was not found.");
-		}
-	}
+public:
+	CScene(std::weak_ptr<ISceneChanger> sceneChanger) noexcept;
+#pragma endregion
+
+#pragma region デストラクタ
+public:
+	virtual ~CScene() noexcept = default;
+#pragma endregion
+
+#pragma region 継承先のみ公開
+protected:
+	std::weak_ptr<ISceneChanger> m_sceneChanger;
+#pragma endregion
+
+#pragma region 非公開
+private:
+	std::vector<std::shared_ptr<const IGraphic>> m_drawList;
+#pragma endregion
 };

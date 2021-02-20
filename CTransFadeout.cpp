@@ -1,13 +1,14 @@
-#include "CTransFadeout.h"
-#include "CBright.h"
 #include <Windows.h>
 #include <cassert>
 #include <string>
 
-CTransFadeout::CTransFadeout(int speed, Mode mode)
+#include "CBright.h"
+#include "CTransFadeout.h"
+
+CTransFadeout::CTransFadeout(int speed, Mode mode) noexcept
     : mSpeed(speed)
     , mMode(mode) {}
-CTransFadeout::~CTransFadeout() {}
+
 bool CTransFadeout::update(const std::weak_ptr<CScene> &scene) {
 	switch (mMode) {
 	case Mode::Fix: // update ‚¹‚¸ŒÅ’è‚ÌŽž

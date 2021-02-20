@@ -99,14 +99,14 @@
     <ClInclude Include="ImageSpriteStudio.h">
       <Filter>Resource\Graphic\Image</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic.h">
-      <Filter>Resource\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="BGM.h">
       <Filter>Resource\Sound\BGM</Filter>
     </ClInclude>
     <ClInclude Include="BGMMenu.h">
       <Filter>Resource\Sound\BGM</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphic.h">
+      <Filter>Resource\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +143,12 @@
     </ClCompile>
     <ClCompile Include="Menu.cpp">
       <Filter>Scene\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="CScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ITrans.cpp">
+      <Filter>Transition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

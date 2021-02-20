@@ -9,10 +9,15 @@ SSLogo::SSLogo(std::weak_ptr<ISceneChanger> sceneChanger)
     , mSS(std::make_shared<ImageSpriteStudio>()) {
 	addToDrawList(mSS);
 }
+
+std::shared_ptr<ITransStart> SSLogo::getTransStart() const {
+	return nullptr;
+}
+
 void SSLogo::update() {
 	if (mSS->update()) {
 		// ƒV[ƒ“‚Ì•ÏX
-		mSceneChanger.lock()->ChangeScene(
-		    nullptr, nullptr, std::make_shared<Opening::Title>(mSceneChanger));
+		m_sceneChanger.lock()->ChangeScene(
+		    nullptr, std::make_shared<Opening::Title>(m_sceneChanger));
 	}
 }

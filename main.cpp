@@ -1,8 +1,7 @@
 #if DEBUG | _DEBUG
 #define _CRT_SECURE_NO_WARNINGS
 #include <crtdbg.h>
-#include <stdio.h>
-#include <string>
+#include <cstdio>
 #endif
 
 #include "CSceneMgr.h"
@@ -11,13 +10,12 @@
 #include <DxLib.h>
 //#include "Game.h" /* デバッグ中 */
 #include "key.h"
-#include <iostream>
 #include <memory>
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #if DEBUG | _DEBUG
 	AllocConsole();
-	freopen("CONOUT$", "w", stdout);
+	(void)std::freopen("CONOUT$", "w", stdout);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
@@ -42,9 +40,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 
 	auto sceneMgr = std::make_shared<CSceneMgr>();
-	sceneMgr->ChangeScene(
-	    nullptr, std::make_shared<CTransFadein>(60, CTransFadein::Mode::Fix),
-	    std::make_shared<Opening::MyLogo>(sceneMgr));
+	sceneMgr->ChangeScene(nullptr, std::make_shared<Opening::MyLogo>(sceneMgr));
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 		UpdateKey();        // キー情報の更新
 		sceneMgr->update(); // シーンの更新

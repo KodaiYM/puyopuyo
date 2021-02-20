@@ -3,26 +3,23 @@
 
 // 画面遷移のインターフェース
 class ITrans {
-protected:
-	ITrans() {}
-	virtual ~ITrans() {}
-
 public:
 	// 最後のフレームで true を返す
 	virtual bool update(const std::weak_ptr<CScene> &scene)     = 0;
 	virtual void draw(const std::weak_ptr<CScene> &scene) const = 0;
+
+public:
+	virtual ~ITrans() noexcept = default;
 };
 
 // 終了時画面遷移のインターフェース
 class ITransEnd : public ITrans {
-protected:
-	ITransEnd() {}
-	virtual ~ITransEnd() {}
+public:
+	virtual ~ITransEnd() noexcept = 0;
 };
 
 // 開始時画面遷移のインターフェース
 class ITransStart : public ITrans {
-protected:
-	ITransStart() {}
-	virtual ~ITransStart() {}
+public:
+	virtual ~ITransStart() noexcept = 0;
 };

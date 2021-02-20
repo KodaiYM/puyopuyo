@@ -71,15 +71,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -178,14 +182,16 @@
     <ClInclude Include="function.h" />
     <ClInclude Include="Opening.MyLogo.h" />
     <ClInclude Include="key.h" />
-    <ClInclude Include="Graphic.h" />
+    <ClInclude Include="IGraphic.h" />
     <ClInclude Include="BGM.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CBright.cpp" />
+    <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CTransDarkness.cpp" />
     <ClCompile Include="CTransFadein.cpp" />
     <ClCompile Include="CTransFadeout.cpp" />
+    <ClCompile Include="ITrans.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Opening.SSLogo.cpp" />
     <ClCompile Include="Opening.Title.cpp" />

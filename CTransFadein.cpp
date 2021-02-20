@@ -4,9 +4,10 @@
 #include <cassert>
 #include <string>
 
-CTransFadein::CTransFadein(int speed, Mode mode)
+CTransFadein::CTransFadein(int speed, Mode mode) noexcept
     : mSpeed(speed)
     , mMode(mode) {}
+
 bool CTransFadein::update(const std::weak_ptr<CScene> &scene) {
 	// ‰‚ß‚Ä‚Ì update ‚Ì
 	if (mFirstUpdate) {

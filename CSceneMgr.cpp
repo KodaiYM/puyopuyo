@@ -65,12 +65,11 @@ void CSceneMgr::draw() const {
 		}
 	}
 }
-void CSceneMgr::ChangeScene(std::shared_ptr<ITransEnd> &&  howToEnd,
-                            std::shared_ptr<ITransStart> &&howToStart,
-                            std::shared_ptr<CScene>        nextScene) {
+void CSceneMgr::ChangeScene(std::shared_ptr<ITransEnd> howToEnd,
+                            std::shared_ptr<CScene>    nextScene) {
 	mHowToEnd   = std::move(howToEnd);
-	mHowToStart = std::move(howToStart);
 	mNextScene  = std::move(nextScene);
+	mHowToStart = mNextScene->getTransStart();
 	changed     = true;
 	lasted      = false;
 }

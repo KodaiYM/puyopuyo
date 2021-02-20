@@ -4,10 +4,10 @@
 #include <cassert>
 #include <string>
 
-CTransDarkness::CTransDarkness(int frame, Mode mode)
+CTransDarkness::CTransDarkness(int frame, Mode mode) noexcept
     : mFrame(frame)
     , mMode(mode) {}
-CTransDarkness::~CTransDarkness() {}
+
 bool CTransDarkness::update(const std::weak_ptr<CScene> &scene) {
 	// ‰‚ß‚Ä‚Ì update ‚Ìê‡
 	if (mFirstUpdate) {
@@ -37,4 +37,4 @@ bool CTransDarkness::update(const std::weak_ptr<CScene> &scene) {
 	// ÅŒã‚ÌƒtƒŒ[ƒ€‚Ì true
 	return mCounter == mFrame;
 }
-void CTransDarkness::draw(const std::weak_ptr<CScene> &scene) const {}
+void CTransDarkness::draw(const std::weak_ptr<CScene> &scene) const noexcept {}

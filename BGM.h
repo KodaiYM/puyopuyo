@@ -7,14 +7,45 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
 #pragma comment(lib, "shlwapi.lib")
 using namespace std::string_literals;
 
 // 1つのサウンドリソースのクラス
 template <class Derived>
 class BGM {
+#pragma region 外部公開
+public:
+	// サウンドを再生する
+	bool play();
+	// サウンドの停止
+	void stop() const;
+
+public:
+	BGM();
+#pragma endregion
+
+#pragma region デストラクタ
+public:
+	virtual ~BGM() noexcept = 0;
+#pragma endregion
+
+#pragma region 非公開
 private:
-	static int LoadSound_(const char *filename) noexcept(false) {
+	// このリソースの利用者数
+	inline static unsigned int s_count = 0;
+
+	// このサウンドのパス
+	static const std::string path;
+
+	// このサウンドのハンドル
+	inline static int handle;
+
+private:
+	bool lasted = true; // 直前が最後の再生位置だった時、true
+
+private:
+	static int LoadSound_(const char *filename) {
 		/* ファイルの存在確認 */
 		std::ifstream ifs(filename);
 		if (!ifs) {
@@ -29,35 +60,13 @@ private:
 		}
 		return handle;
 	}
-
-protected:
-	BGM();
-	~BGM();
-
-private:
-	// このリソースの利用者数
-	inline static unsigned int count = 0;
-
-	// このサウンドのパス
-	static const std::string path;
-
-	// このサウンドのハンドル
-	inline static int handle;
-
-private:
-	bool lasted = true; // 直前が最後の再生位置だった時、true
-
-public:
-	// サウンドの再生開始
-	bool play();
-	// サウンドの停止
-	void stop() const;
+#pragma endregion
 };
 
 template <class Derived>
 BGM<Derived>::BGM() {
 	// 初めての利用の時
-	if (0 == count) {
+	if (0 == s_count) {
 		// 他にこのリソースの使用をしていた人がいない場合
 
 		// 非同期読み込み
@@ -91,18 +100,18 @@ BGM<Derived>::BGM() {
 		SetUseASyncLoadFlag(FALSE);
 	}
 	// 利用者数を1増やす
-	++count;
+	++s_count;
 }
 
 template <class Derived>
-BGM<Derived>::~BGM() {
-	assert(count >= 1);
+BGM<Derived>::~BGM() noexcept {
+	assert(s_count >= 1);
 
 	// 利用者数を1減らす
-	--count;
+	--s_count;
 
 	// 利用者数が0になった
-	if (0 == count) {
+	if (0 == s_count) {
 		StopSoundMem(handle);
 		DeleteSoundMem(handle);
 	}

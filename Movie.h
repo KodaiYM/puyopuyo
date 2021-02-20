@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphic.h"
+#include "IGraphic.h"
 #include <DxLib.h>
 #include <Shlwapi.h>
 #include <cassert>
@@ -13,7 +13,35 @@ using namespace std::string_literals;
 
 // 1つのムービーリソースのクラス
 template <class Derived>
-class Movie : public Graphic {
+class Movie : public IGraphic {
+#pragma region 外部公開
+public:
+	// update が呼ばれたフレームは、動画が進む
+	// 動画の最終フレームで、true を返す
+	[[nodiscard]] bool update() final;
+	// 動画を描画する
+	void draw() const final;
+
+public:
+	Movie();
+#pragma endregion
+
+#pragma region デストラクタ
+public:
+	virtual ~Movie() noexcept = 0;
+#pragma endregion
+
+#pragma region 非公開
+private:
+	// このリソースの利用者数
+	inline static unsigned int s_count = 0;
+
+	// この動画のパス
+	static const std::string path;
+
+	// この動画のハンドル
+	inline static int handle;
+
 private:
 	static int LoadSound_(const char *filename) {
 		/* ファイルの存在確認 */
@@ -31,37 +59,17 @@ private:
 		return handle;
 	}
 
-protected:
-	Movie();
-	~Movie();
-
 private:
-	// このリソースの利用者数
-	inline static unsigned int count = 0;
-
-	// この動画のパス
-	static const std::string path;
-
-	// この動画のハンドル
-	inline static int handle;
-
-private:
-	int          x = 0, y = 0;    // 描画位置
-	mutable bool updated = false; // update が呼ばれたかどうか
+	int          m_x = 0, m_y = 0; // 描画位置
+	mutable bool updated = false;  // update が呼ばれたかどうか
 	bool         lasted  = true; // 直前が最終フレームだった時、true
-
-public:
-	// update が呼ばれたフレームは、動画が進む
-	// 動画の最終フレームで、true を返す
-	virtual bool update() override final;
-	// 動画を描画する
-	virtual void draw() const override final;
+#pragma endregion
 };
 
 template <class Derived>
 Movie<Derived>::Movie() {
 	// 初めての利用の時
-	if (0 == count) {
+	if (0 == s_count) {
 		// 他にこのリソースの使用をしていた人がいない場合
 
 		// 非同期読み込み
@@ -94,18 +102,18 @@ Movie<Derived>::Movie() {
 		SetUseASyncLoadFlag(FALSE);
 	}
 	// 利用者数を1増やす
-	++count;
+	++s_count;
 }
 
 template <class Derived>
-Movie<Derived>::~Movie() {
-	assert(count >= 1);
+Movie<Derived>::~Movie() noexcept {
+	assert(s_count >= 1);
 
 	// 利用者数を1減らす
-	--count;
+	--s_count;
 
 	// 利用者数が0になった
-	if (0 == count) {
+	if (0 == s_count) {
 		PauseMovieToGraph(handle);
 		DeleteGraph(handle);
 	}
@@ -169,7 +177,7 @@ void Movie<Derived>::draw() const {
 	}
 
 	// 動画の描画
-	DrawGraph(x, y, handle, FALSE);
+	DrawGraph(m_x, m_y, handle, FALSE);
 
 	// updateが呼ばれなかったフレームは、止める
 	if (!updated) {
