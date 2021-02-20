@@ -6,16 +6,16 @@ using namespace Opening;
 
 SSLogo::SSLogo(std::weak_ptr<ISceneChanger> sceneChanger)
     : CScene(sceneChanger)
-    , mSS(std::make_shared<ImageSpriteStudio>()) {
-	addToDrawList(mSS);
+    , m_SpriteStudio(std::make_shared<ImageSpriteStudio>()) {
+	addToDrawList(m_SpriteStudio);
 }
 
-std::shared_ptr<ITransStart> SSLogo::getTransStart() const {
+std::shared_ptr<ITransStart> SSLogo::getTransStart() const noexcept {
 	return nullptr;
 }
 
 void SSLogo::update() {
-	if (mSS->update()) {
+	if (m_SpriteStudio->update()) {
 		// ƒV[ƒ“‚Ì•ÏX
 		m_sceneChanger.lock()->ChangeScene(
 		    nullptr, std::make_shared<Opening::Title>(m_sceneChanger));

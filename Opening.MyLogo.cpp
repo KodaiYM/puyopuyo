@@ -8,8 +8,8 @@ using namespace Opening;
 
 MyLogo::MyLogo(std::weak_ptr<ISceneChanger> sceneChanger)
     : CScene(sceneChanger)
-    , mMyLogo(std::make_shared<ImageLogo>()) {
-	addToDrawList(mMyLogo);
+    , m_MyLogo(std::make_shared<ImageLogo>()) {
+	addToDrawList(m_MyLogo);
 }
 
 std::shared_ptr<ITransStart> MyLogo::getTransStart() const {
@@ -17,13 +17,13 @@ std::shared_ptr<ITransStart> MyLogo::getTransStart() const {
 }
 
 void MyLogo::update() {
-	if (mCounter <= 120) {
-		if (120 == mCounter) {
+	if (m_counter <= 120) {
+		if (120 == m_counter) {
 			// ƒV[ƒ“‚Ì•ÏX
 			m_sceneChanger.lock()->ChangeScene(
 			    std::make_shared<CTransFadeout>(30, CTransFadeout::Mode::Fix),
 			    std::make_shared<SSLogo>(m_sceneChanger));
 		}
-		++mCounter;
+		++m_counter;
 	}
 }

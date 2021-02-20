@@ -25,11 +25,11 @@ public:
 
 #pragma region ”ñŒöŠJ
 private:
-	bool lasted  = false;
-	bool changed = false; // ’¼‘O‚Ì update ‚ª ChangeScene ‚ðŒÄ‚ñ‚¾
-	std::shared_ptr<ITransEnd>   mHowToEnd;
-	std::shared_ptr<ITransStart> mHowToStart;
-	std::shared_ptr<CScene>      mCurrentScene;
-	std::shared_ptr<CScene>      mNextScene;
+	bool m_lasted = false;
+	bool changed  = false; // ’¼‘O‚Ì update ‚ª ChangeScene ‚ðŒÄ‚ñ‚¾
+	std::shared_ptr<ITransEnd>   m_howToEnd;
+	std::shared_ptr<ITransStart> m_howToStart;
+	std::shared_ptr<CScene>      m_currentScene;
+	std::shared_ptr<CScene>      m_nextScene;
 #pragma endregion
 };

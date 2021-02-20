@@ -16,8 +16,8 @@ public:
 
 #pragma region ”ñŒöŠJ
 private:
-	int                              mCounter = 0;
-	const std::shared_ptr<ImageLogo> mMyLogo;
+	int                              m_counter = 0;
+	const std::shared_ptr<ImageLogo> m_MyLogo;
 #pragma endregion
 };
 } // namespace Opening

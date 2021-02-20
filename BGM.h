@@ -36,13 +36,13 @@ private:
 	inline static unsigned int s_count = 0;
 
 	// このサウンドのパス
-	static const std::string path;
+	static const std::string s_path;
 
 	// このサウンドのハンドル
-	inline static int handle;
+	inline static int s_handle;
 
 private:
-	bool lasted = true; // 直前が最後の再生位置だった時、true
+	bool m_lasted = true; // 直前が最後の再生位置だった時、true
 
 private:
 	static int LoadSound_(const char *filename) {
@@ -54,7 +54,7 @@ private:
 		ifs.close();
 
 		/* ファイルハンドルの取得 */
-		int handle = LoadSoundMem(filename, 1); // 同時再生可能数 1
+		const int handle = LoadSoundMem(filename, 1); // 同時再生可能数 1
 		if (handle == -1) {
 			throw std::ios_base::failure("failed to open the file: "s + filename);
 		}
@@ -74,9 +74,9 @@ BGM<Derived>::BGM() {
 
 		try {
 			SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMNOPRESS);
-			handle = LoadSound_(path.c_str());
-			SetSoundCurrentPosition(0, handle);
-		} catch (std::ios_base::failure ios_f) {
+			s_handle = LoadSound_(s_path.c_str());
+			SetSoundCurrentPosition(0, s_handle);
+		} catch (const std::ios_base::failure &ios_f) {
 			// よく分からないが読み込み失敗
 
 			MessageBox(
@@ -87,10 +87,10 @@ BGM<Derived>::BGM() {
 		}
 
 		// メモリ不足等で読み込み失敗
-		if (handle == -1) {
+		if (s_handle == -1) {
 			MessageBox(NULL,
 			           (std::string("Error in " __FUNCTION__ "\n") +
-			            "unable to get handle of: " + path)
+			            "unable to get handle of: " + s_path)
 			               .c_str(),
 			           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 			std::exit(EXIT_FAILURE);
@@ -112,18 +112,18 @@ BGM<Derived>::~BGM() noexcept {
 
 	// 利用者数が0になった
 	if (0 == s_count) {
-		StopSoundMem(handle);
-		DeleteSoundMem(handle);
+		StopSoundMem(s_handle);
+		DeleteSoundMem(s_handle);
 	}
 }
 
 template <class Derived>
-const std::string BGM<Derived>::path = []() {
+const std::string BGM<Derived>::s_path = []() {
 	// ファイルが存在しないとき
-	if (auto fs = std::ifstream(Derived::path); !fs.is_open()) {
+	if (auto fs = std::ifstream(Derived::s_path); !fs.is_open()) {
 		MessageBox(NULL,
 		           (std::string("Error in " __FUNCTION__ "\n") +
-		            "Cannot find file: " + Derived::path)
+		            "Cannot find file: " + Derived::s_path)
 		               .c_str(),
 		           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 		std::exit(EXIT_FAILURE);
@@ -132,25 +132,25 @@ const std::string BGM<Derived>::path = []() {
 	// ファイルが存在するとき
 
 	// wav, ogg 以外の拡張子の場合は未対応
-	if (const auto path_sv = std::string_view(Derived::path);
+	if (const auto path_sv = std::string_view(Derived::s_path);
 	    !path_sv.ends_with(".wav") && !path_sv.ends_with(".ogg")) {
 		MessageBox(NULL,
 		           (std::string("Error in " __FUNCTION__ "\n") +
-		            "The extension must be ogg or wav: " + Derived::path)
+		            "The extension must be ogg or wav: " + Derived::s_path)
 		               .c_str(),
 		           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 		std::exit(EXIT_FAILURE);
 	}
 
-	return Derived::path;
+	return Derived::s_path;
 }();
 
 template <class Derived>
 bool BGM<Derived>::play() {
 	/* 読み込み中なら読み込み完了まで待つ */
-	while (CheckHandleASyncLoad(handle) == TRUE) {
+	while (CheckHandleASyncLoad(s_handle) == TRUE) {
 #ifdef _DEBUG
-		std::cout << "loading BGM handle: " << path << "(" << handle << ")"
+		std::cout << "loading BGM handle: " << s_path << "(" << s_handle << ")"
 		          << std::endl;
 #endif
 		ProcessMessage();
@@ -158,28 +158,28 @@ bool BGM<Derived>::play() {
 	}
 
 	// 停止状態のとき、サウンドを再生状態にする
-	if (CheckSoundMem(handle) == 0) {
-		PlaySoundMem(handle, DX_PLAYTYPE_BACK, FALSE);
+	if (CheckSoundMem(s_handle) == 0) {
+		PlaySoundMem(s_handle, DX_PLAYTYPE_BACK, FALSE);
 	}
 
 	// 直前が最終位置だった時
-	if (lasted) {
+	if (m_lasted) {
 		// 最初に戻す
-		StopSoundMem(handle);
-		PlaySoundMem(handle, DX_PLAYTYPE_BACK, TRUE);
+		StopSoundMem(s_handle);
+		PlaySoundMem(s_handle, DX_PLAYTYPE_BACK, TRUE);
 
-		lasted = false;
+		m_lasted = false;
 	}
 
 	// 最終位置のとき
-	if (GetSoundTotalTime(handle) - 1 <= GetSoundCurrentTime(handle)) {
-		lasted = true;
+	if (GetSoundTotalTime(s_handle) - 1 <= GetSoundCurrentTime(s_handle)) {
+		m_lasted = true;
 	}
 
-	return lasted;
+	return m_lasted;
 }
 
 template <class Derived>
 void BGM<Derived>::stop() const {
-	StopSoundMem(handle);
+	StopSoundMem(s_handle);
 }

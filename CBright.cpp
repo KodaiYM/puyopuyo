@@ -1,56 +1,49 @@
 #include "CBright.h"
-#include <iostream>
 #include <DxLib.h>
+#include <iostream>
 
-int CBright::Fade(int RedBright, int GreenBright, int BlueBright, int speed) {
+int CBright::Fade(int red, int green, int blue, int frame) {
 	// 前回この関数が呼び出された時の設定と違ったら、初期設定する
-	if (RedBright != mRed || GreenBright != mGreen || BlueBright != mBlue || speed != mSpeed) {
-		auto red = std::make_shared<int>();
-		auto green = std::make_shared<int>();
-		auto blue = std::make_shared<int>();
+	if (red != m_targetRed || green != m_targetGreen || blue != m_targetBlue ||
+	    frame != m_frame) {
+		GetScreenBright(m_initRed, m_initGreen, m_initBlue);
 
-		GetDrawBright(red, green, blue);
-		r = *red; g = *green; b = *blue;
-
-		mRed = RedBright;
-		mGreen = GreenBright;
-		mBlue = BlueBright;
-		mSpeed = speed;
-		frame_per_red = mSpeed * 100 / (mRed - r);
-		frame_per_green = mSpeed * 100 / (mGreen - g);
-		frame_per_blue = mSpeed * 100 / (mBlue - b);
-		mCount = 0;
+		m_targetRed       = red;
+		m_targetGreen     = green;
+		m_targetBlue      = blue;
+		m_frame           = frame;
+		m_frame_per_red   = m_frame * 100 / (m_targetRed - m_initRed);
+		m_frame_per_green = m_frame * 100 / (m_targetGreen - m_initGreen);
+		m_frame_per_blue  = m_frame * 100 / (m_targetBlue - m_initBlue);
+		m_count           = 0;
 	}
 
-	if (mCount == mSpeed) {
+	if (m_count == m_frame) {
 		return 0;
 	} else {
 		// 最終フレーム
-		if (mCount == mSpeed - 1) {
+		if (m_count == m_frame - 1) {
 			// 計算で少しずれるので、目標値にする
-			SetDrawBright(mRed, mGreen, mBlue);
+			SetScreenBright(m_targetRed, m_targetGreen, m_targetBlue);
 		} else {
 			// フェード途中
-			SetDrawBright((int)(r + mCount * 100 / frame_per_red), (int)(g + mCount * 100 / frame_per_green), (int)(b + mCount * 100 / frame_per_blue));
+			SetScreenBright((int)(m_initRed + m_count * 100 / m_frame_per_red),
+			                (int)(m_initGreen + m_count * 100 / m_frame_per_green),
+			                (int)(m_initBlue + m_count * 100 / m_frame_per_blue));
 		}
-		mCount++;
+		m_count++;
 	}
 
-	return mSpeed - mCount;
+	return m_frame - m_count;
 }
 
-void CBright::GetDrawBright(std::shared_ptr<int> Red, std::shared_ptr<int> Green, std::shared_ptr<int> Blue) const {
-	int red, green, blue;
+void CBright::GetScreenBright(int &red, int &green, int &blue) const {
 	if (DxLib::GetDrawBright(&red, &green, &blue) == -1) {
 		throw "輝度の取得に失敗しました。";
 	}
-
-	*Red = red;
-	*Green = green;
-	*Blue = blue;
 }
-void CBright::SetDrawBright(int RedBright, int GreenBright, int BlueBright) const {
-	if (DxLib::SetDrawBright(RedBright, GreenBright, BlueBright) == -1) {
+void CBright::SetScreenBright(int red, int green, int blue) const {
+	if (DxLib::SetDrawBright(red, green, blue) == -1) {
 		throw "輝度設定に失敗しました。";
 	}
 }

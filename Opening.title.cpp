@@ -13,28 +13,28 @@ using namespace Opening;
 
 Title::Title(std::weak_ptr<ISceneChanger> sceneChanger)
     : CScene(sceneChanger)
-    , mTitleMovie(std::make_shared<MovieTitle>()) {
-	addToDrawList(mTitleMovie);
+    , m_TitleMovie(std::make_shared<MovieTitle>()) {
+	addToDrawList(m_TitleMovie);
 }
 
-std::shared_ptr<ITransStart> Title::getTransStart() const {
+std::shared_ptr<ITransStart> Title::getTransStart() const noexcept {
 	return nullptr;
 }
 
 void Title::update() {
 	// まだムービーが終了していなければ
-	if (!mMovieFinished) {
+	if (!m_movieFinished) {
 		// 再生する。
 		// ムービー終了なら
-		if (mTitleMovie->update()) {
+		if (m_TitleMovie->update()) {
 			// ムービー終了とする
-			mMovieFinished = true;
+			m_movieFinished = true;
 		}
 	}
 
-	switch (mCounter) {
+	switch (m_counter) {
 	case 0: // まだエンターを押していない
-		if (mMovieFinished) {
+		if (m_movieFinished) {
 			// ムービー終了
 			m_sceneChanger.lock()->ChangeScene(
 			    std::make_shared<CTransDarkness>(60, CTransDarkness::Mode::Fix),
@@ -43,7 +43,7 @@ void Title::update() {
 			m_sceneChanger.lock()->ChangeScene(
 			    std::make_shared<CTransFadeout>(60, CTransFadeout::Mode::Update),
 			    std::make_shared<Menu::SceneMenu>(m_sceneChanger));
-			++mCounter;
+			++m_counter;
 		}
 		break;
 	case 1: // エンターを押して、遷移中

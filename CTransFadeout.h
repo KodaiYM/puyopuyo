@@ -29,8 +29,7 @@ public:
 
 #pragma region 非公開
 private:
-	bool       mFirstUpdate = true; // 初めての update
-	const int  mSpeed;
-	const Mode mMode;
+	const int  m_frame; // フェードアウトするフレーム数
+	const Mode m_mode;  // フェードアウト方法
 #pragma endregion
 };

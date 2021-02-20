@@ -22,17 +22,17 @@ public:
 
 #pragma region ”ñŒöŠJ
 private:
-	int mCounter = 0;
+	enum class BUTTON { BATTLE, TOKOTON } m_selected_button = BUTTON::BATTLE;
 
 	/* ‰æ‘œ */
-	const std::shared_ptr<ImageBackground>      mBackground;
-	const std::shared_ptr<ImageBattle>          mBattle;
-	const std::shared_ptr<ImageBattleSelected>  mBattle_selected;
-	const std::shared_ptr<ImageTokoton>         mTokoton;
-	const std::shared_ptr<ImageTokotonSelected> mTokoton_selected;
+	const std::shared_ptr<ImageBackground>      m_background;
+	const std::shared_ptr<ImageBattle>          m_battle;
+	const std::shared_ptr<ImageBattleSelected>  m_battle_selected;
+	const std::shared_ptr<ImageTokoton>         m_tokoton;
+	const std::shared_ptr<ImageTokotonSelected> m_tokoton_selected;
 
 	/* ‰¹ */
-	BGMMenu mBGMMenu;
+	BGMMenu m_BGMMenu;
 #pragma endregion
 };
 } // namespace Menu

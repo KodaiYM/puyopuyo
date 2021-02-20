@@ -16,10 +16,10 @@ public:
 
 public:
   /**
-   * speed: フェードインするフレーム数
+   * frame: フェードインするフレーム数
    * mode:  フェードイン方法
    */
-  CTransFadein(int speed, Mode mode) noexcept;
+  CTransFadein(int frame, Mode mode) noexcept;
 #pragma endregion
 
 #pragma region デストラクタ
@@ -29,9 +29,9 @@ public:
 
 #pragma region 非公開
 private:
-	bool       mFirstUpdate = true; // 初めてのupdate
-	int        mCounter     = 0;
-	const int  mSpeed;
-	const Mode mMode;
+	bool       m_firstUpdate = true; // 初めてのupdate
+	int        m_counter     = 0;    // フレームカウンタ
+	const int  m_frame;              // フェードインフレーム数
+	const Mode m_mode;               // フェードイン方法
 #pragma endregion
 };

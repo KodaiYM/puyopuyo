@@ -7,8 +7,8 @@ namespace Opening {
 class SSLogo   final : public CScene {
 #pragma region ŠO•”ŒöŠJ
 public:
-	std::shared_ptr<ITransStart> getTransStart() const override;
-	virtual void                 update() override;
+	std::shared_ptr<ITransStart> getTransStart() const noexcept override;
+	void                         update() override;
 
 public:
 	SSLogo(std::weak_ptr<ISceneChanger> sceneChanger);
@@ -16,10 +16,10 @@ public:
 
 #pragma region ”ñŒöŠJ
 private:
-	int mCounter           = 0;
-	int mSpriteStudioIndex = 0;
+	int m_counter           = 0;
+	int m_SpriteStudioIndex = 0;
 
-	const std::shared_ptr<ImageSpriteStudio> mSS;
+	const std::shared_ptr<ImageSpriteStudio> m_SpriteStudio;
 #pragma endregion
 };
 } // namespace Opening

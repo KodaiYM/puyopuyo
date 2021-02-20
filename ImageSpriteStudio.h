@@ -4,7 +4,7 @@
 
 class ImageSpriteStudio final : public Image<ImageSpriteStudio> {
 public:
-	static constexpr const char *path = "../puyopuyo/img/Opening/SpriteStudio";
+	static constexpr const char *s_path = "../puyopuyo/img/Opening/SpriteStudio";
 
 	ImageSpriteStudio()
 	    : Image(0, 0) {}

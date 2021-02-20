@@ -30,9 +30,9 @@ public:
 
 #pragma region 非公開
 private:
-	bool       mFirstUpdate = true; // 初めての update
-	int        mCounter     = 0;
-	const int  mFrame;
-	const Mode mMode;
+	bool       m_firstUpdate = true; // 初めての update
+	int        m_counter     = 0;    // フレームカウンタ
+	const int  m_frame;              // 暗転フレーム長さ
+	const Mode m_mode; // 暗転状態での、シーンの動作方法
 #pragma endregion
 };

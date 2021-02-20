@@ -22,7 +22,7 @@ class Image : public IGraphic {
 #pragma region 外部公開
 public:
 	// updateの結果が画像の最後の要素を指す時、true を返す
-	bool update() override;
+	bool update() noexcept override;
 	void draw() const final;
 	void setX(int x) noexcept;
 	void setY(int y) noexcept;
@@ -135,14 +135,14 @@ Image<Derived>::~Image() noexcept {
 
 template <class Derived>
 const std::vector<std::string> Image<Derived>::s_paths = []() {
-	std::vector<std::string> s_paths;
+	std::vector<std::string> paths;
 
-	if (PathIsDirectory(Derived::path)) {
+	if (PathIsDirectory(Derived::s_path)) {
 		// グラフィックのパスがディレクトリの場合、0.* から順に見つかるだけ探す
 
 		if (WIN32_FIND_DATA FindFileData;
 		    INVALID_HANDLE_VALUE !=
-		    FindFirstFile((Derived::path + "/0.*"s).c_str(), &FindFileData)) {
+		    FindFirstFile((Derived::s_path + "/0.*"s).c_str(), &FindFileData)) {
 			// 0.* ファイルが見つかった場合
 
 			// ドット付きの拡張子を取得
@@ -152,7 +152,7 @@ const std::vector<std::string> Image<Derived>::s_paths = []() {
 			while (1) {
 				// i.* ファイルを探す（i は 0 以上の10進数値）
 				const auto filename =
-				    Derived::path + "/"s + std::to_string(i) + extension;
+				    Derived::s_path + "/"s + std::to_string(i) + extension;
 
 				// ファイルが存在しないとき
 				if (!PathFileExists(filename.c_str())) {
@@ -160,14 +160,14 @@ const std::vector<std::string> Image<Derived>::s_paths = []() {
 				}
 
 				// パス一覧に追加
-				s_paths.push_back(filename);
+				paths.push_back(filename);
 				++i;
 			}
 		} else {
 			// 0.*　ファイルが見つからない場合
 			MessageBox(NULL,
 			           ("Error in " __FUNCTION__ "\n"s +
-			            "There is no 0.* file in the directory: " + Derived::path)
+			            "There is no 0.* file in the directory: " + Derived::s_path)
 			               .c_str(),
 			           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 			std::exit(EXIT_FAILURE);
@@ -176,25 +176,25 @@ const std::vector<std::string> Image<Derived>::s_paths = []() {
 		// グラフィックのパスがファイルの場合
 
 		// ファイルが存在しないとき
-		if (!PathFileExists(Derived::path)) {
+		if (!PathFileExists(Derived::s_path)) {
 			MessageBox(NULL,
 			           ("Error in " __FUNCTION__ "\n"s +
-			            "Cannot find file: " + Derived::path)
+			            "Cannot find file: " + Derived::s_path)
 			               .c_str(),
 			           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 			std::exit(EXIT_FAILURE);
 		}
 
 		// ファイルが存在するとき
-		s_paths.push_back(Derived::path);
+		paths.push_back(Derived::s_path);
 	}
 
-	assert(!s_paths.empty());
-	return s_paths;
+	assert(!paths.empty());
+	return paths;
 }();
 
 template <class Derived>
-bool Image<Derived>::update() {
+bool Image<Derived>::update() noexcept {
 	// ハンドル位置を進める
 	++m_current_handle;
 

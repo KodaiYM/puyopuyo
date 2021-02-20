@@ -37,10 +37,10 @@ private:
 	inline static unsigned int s_count = 0;
 
 	// この動画のパス
-	static const std::string path;
+	static const std::string s_path;
 
 	// この動画のハンドル
-	inline static int handle;
+	inline static int s_handle;
 
 private:
 	static int LoadSound_(const char *filename) {
@@ -60,9 +60,9 @@ private:
 	}
 
 private:
-	int          m_x = 0, m_y = 0; // 描画位置
-	mutable bool updated = false;  // update が呼ばれたかどうか
-	bool         lasted  = true; // 直前が最終フレームだった時、true
+	int          m_x = 0, m_y = 0;  // 描画位置
+	mutable bool m_updated = false; // update が呼ばれたかどうか
+	bool m_lasted = true; // 直前が最終フレームだった時、true
 #pragma endregion
 };
 
@@ -76,8 +76,8 @@ Movie<Derived>::Movie() {
 		SetUseASyncLoadFlag(TRUE);
 
 		try {
-			handle = LoadSound_(path.c_str());
-			SeekMovieToGraphToFrame(handle, 0);
+			s_handle = LoadSound_(s_path.c_str());
+			SeekMovieToGraphToFrame(s_handle, 0);
 		} catch (std::ios_base::failure ios_f) {
 			// よく分からないが読み込み失敗
 
@@ -89,10 +89,10 @@ Movie<Derived>::Movie() {
 		}
 
 		// メモリ不足等で読み込み失敗
-		if (handle == -1) {
+		if (s_handle == -1) {
 			MessageBox(NULL,
 			           (std::string("Error in " __FUNCTION__ "\n") +
-			            "unable to get handle of: " + path)
+			            "unable to get handle of: " + s_path)
 			               .c_str(),
 			           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 			std::exit(EXIT_FAILURE);
@@ -114,18 +114,18 @@ Movie<Derived>::~Movie() noexcept {
 
 	// 利用者数が0になった
 	if (0 == s_count) {
-		PauseMovieToGraph(handle);
-		DeleteGraph(handle);
+		PauseMovieToGraph(s_handle);
+		DeleteGraph(s_handle);
 	}
 }
 
 template <class Derived>
-const std::string Movie<Derived>::path = []() {
+const std::string Movie<Derived>::s_path = []() {
 	// ファイルが存在しないとき
-	if (auto fs = std::ifstream(Derived::path); !fs.is_open()) {
+	if (auto fs = std::ifstream(Derived::s_path); !fs.is_open()) {
 		MessageBox(NULL,
 		           (std::string("Error in " __FUNCTION__ "\n") +
-		            "Cannot find file: " + Derived::path)
+		            "Cannot find file: " + Derived::s_path)
 		               .c_str(),
 		           TEXT("File Open Error"), MB_OK | MB_ICONERROR);
 		std::exit(EXIT_FAILURE);
@@ -133,43 +133,43 @@ const std::string Movie<Derived>::path = []() {
 
 	// ファイルが存在するとき
 
-	return Derived::path;
+	return Derived::s_path;
 }();
 
 template <class Derived>
 bool Movie<Derived>::update() {
-	updated = true;
+	m_updated = true;
 
 	// 停止状態のとき、ムービーを再生状態にする
-	if (GetMovieStateToGraph(handle) == 0) {
-		PlayMovieToGraph(handle);
+	if (GetMovieStateToGraph(s_handle) == 0) {
+		PlayMovieToGraph(s_handle);
 	}
 
 	// 直前が最終フレームだった時
-	if (lasted) {
+	if (m_lasted) {
 		// 最初に戻す
-		PauseMovieToGraph(handle);
-		SeekMovieToGraphToFrame(handle, 0);
-		PlayMovieToGraph(handle);
+		PauseMovieToGraph(s_handle);
+		SeekMovieToGraphToFrame(s_handle, 0);
+		PlayMovieToGraph(s_handle);
 
-		lasted = false;
+		m_lasted = false;
 	}
 
 	// 最終フレームのとき
-	if (GetMovieTotalFrameToGraph(handle) - 1 ==
-	    TellMovieToGraphToFrame(handle)) {
-		lasted = true;
+	if (GetMovieTotalFrameToGraph(s_handle) - 1 ==
+	    TellMovieToGraphToFrame(s_handle)) {
+		m_lasted = true;
 	}
 
-	return lasted;
+	return m_lasted;
 }
 
 template <class Derived>
 void Movie<Derived>::draw() const {
 	/* 読み込み中なら読み込み完了まで待つ */
-	while (CheckHandleASyncLoad(handle) == TRUE) {
+	while (CheckHandleASyncLoad(s_handle) == TRUE) {
 #ifdef _DEBUG
-		std::cout << "loading movie handle: " << path << "(" << handle << ")"
+		std::cout << "loading movie handle: " << s_path << "(" << s_handle << ")"
 		          << std::endl;
 #endif
 		ProcessMessage();
@@ -177,12 +177,12 @@ void Movie<Derived>::draw() const {
 	}
 
 	// 動画の描画
-	DrawGraph(m_x, m_y, handle, FALSE);
+	DrawGraph(m_x, m_y, s_handle, FALSE);
 
 	// updateが呼ばれなかったフレームは、止める
-	if (!updated) {
-		PauseMovieToGraph(handle);
+	if (!m_updated) {
+		PauseMovieToGraph(s_handle);
 	}
 
-	updated = false;
+	m_updated = false;
 }

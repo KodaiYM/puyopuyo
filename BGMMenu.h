@@ -4,5 +4,5 @@
 
 class BGMMenu final : public BGM<BGMMenu> {
 public:
-	static constexpr const char *path = "../puyopuyo/bgm/Menu/menu_title.wav";
+	static constexpr const char *s_path = "../puyopuyo/bgm/Menu/menu_title.wav";
 };

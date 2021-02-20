@@ -7,7 +7,7 @@ namespace Opening {
 class Title    final : public CScene {
 #pragma region ŠO•”ŒöŠJ
 public:
-	std::shared_ptr<ITransStart> getTransStart() const override;
+	std::shared_ptr<ITransStart> getTransStart() const noexcept override;
 	void                         update() final;
 
 public:
@@ -16,9 +16,9 @@ public:
 
 #pragma region ”ñŒöŠJ
 private:
-	bool                        mMovieFinished = false;
-	int                         mCounter       = 0;
-	std::shared_ptr<MovieTitle> mTitleMovie;
+	bool                        m_movieFinished = false;
+	int                         m_counter       = 0;
+	std::shared_ptr<MovieTitle> m_TitleMovie;
 #pragma endregion
 };
 } // namespace Opening
