@@ -16,6 +16,8 @@
 #pragma comment(lib, "shlwapi.lib")
 using namespace std::string_literals;
 
+// グラフィックリソースの setXY系の基準位置
+enum class ORIGIN { UPPER_LEFT, CENTER };
 // 1つのグラフィックリソースのクラス
 template <class Derived>
 class Image : public IGraphic {
@@ -24,15 +26,16 @@ public:
 	// updateの結果が画像の最後の要素を指す時、true を返す
 	bool update() noexcept override;
 	void draw() const final;
-	void setX(int x) noexcept;
-	void setY(int y) noexcept;
-	void setXY(int x, int y) noexcept;
+	void setX(int x, ORIGIN origin = ORIGIN::UPPER_LEFT);
+	void setY(int y, ORIGIN origin = ORIGIN::UPPER_LEFT);
+	void setXY(int x, int y, ORIGIN origin = ORIGIN::UPPER_LEFT);
 	// pair(x, y)
-	void setXY(const std::pair<int, int> &point) noexcept;
+	void setXY(const std::pair<int, int> &point,
+	           ORIGIN                     origin = ORIGIN::UPPER_LEFT);
 
 public:
 	// 初期描画位置
-	Image(int x, int y);
+	Image(int x, int y, ORIGIN origin = ORIGIN::UPPER_LEFT);
 #pragma endregion
 
 #pragma region デストラクタ
@@ -52,6 +55,9 @@ private:
 	inline static std::vector<int> s_handles;
 
 private:
+	// 現在ハンドル位置のリソースの読み込み完了を待つ
+	void wait_until_current_handle_loaded() const;
+
 	// このリソースの現在ハンドル位置
 	std::vector<int>::iterator m_current_handle;
 
@@ -60,9 +66,7 @@ private:
 };
 
 template <class Derived>
-Image<Derived>::Image(int x, int y)
-    : m_x(x)
-    , m_y(y) {
+Image<Derived>::Image(int x, int y, ORIGIN origin) {
 	// 初めての利用の時
 	if (0 == s_count) {
 		// 他にこのリソースの使用をしていた人がいない場合
@@ -110,6 +114,7 @@ Image<Derived>::Image(int x, int y)
 	++s_count;
 
 	m_current_handle = s_handles.end() - 1;
+	setXY(x, y, origin);
 }
 
 template <class Derived>
@@ -214,9 +219,14 @@ bool Image<Derived>::update() noexcept {
 
 template <class Derived>
 void Image<Derived>::draw() const {
-	/* 読み込み中なら読み込み完了まで待つ */
+	wait_until_current_handle_loaded();
+	DrawGraph(m_x, m_y, *m_current_handle, TRUE);
+}
+
+template <class Derived>
+void Image<Derived>::wait_until_current_handle_loaded() const {
 	while (CheckHandleASyncLoad(*m_current_handle) == TRUE) {
-#ifdef _DEBUG
+#if DEBUG || _DEBUG
 		std::cout << "loading graphic handle: "
 		          << s_paths.at(std::distance(s_handles.begin(), m_current_handle))
 		          << "(" << *m_current_handle << ")" << std::endl;
@@ -224,28 +234,39 @@ void Image<Derived>::draw() const {
 		ProcessMessage();
 		Sleep(1);
 	}
+}
+template <class Derived>
+void Image<Derived>::setX(int x, ORIGIN origin) {
+	wait_until_current_handle_loaded();
 
-	DrawGraph(m_x, m_y, *m_current_handle, TRUE);
+	int width, height;
+	if (-1 == GetGraphSize(*m_current_handle, &width, &height)) {
+		throw "failed to get graph size!";
+	}
+
+	m_x = ORIGIN::UPPER_LEFT == origin ? x : x - (width / 2);
 }
 
 template <class Derived>
-void Image<Derived>::setX(int x) noexcept {
-	m_x = x;
+void Image<Derived>::setY(int y, ORIGIN origin) {
+	wait_until_current_handle_loaded();
+
+	int width, height;
+	if (-1 == GetGraphSize(*m_current_handle, &width, &height)) {
+		throw "failed to get graph size!";
+	}
+
+	m_y = ORIGIN::UPPER_LEFT == origin ? y : y - (height / 2);
 }
 
 template <class Derived>
-void Image<Derived>::setY(int y) noexcept {
-	m_y = y;
+void Image<Derived>::setXY(int x, int y, ORIGIN origin) {
+	setX(x, origin);
+	setY(y, origin);
 }
 
 template <class Derived>
-void Image<Derived>::setXY(int x, int y) noexcept {
-	setX(x);
-	setY(y);
-}
-
-template <class Derived>
-void Image<Derived>::setXY(const std::pair<int, int> &point) noexcept {
+void Image<Derived>::setXY(const std::pair<int, int> &point, ORIGIN origin) {
 	const auto &[x, y] = point;
-	setXY(x, y);
+	setXY(x, y, origin);
 }

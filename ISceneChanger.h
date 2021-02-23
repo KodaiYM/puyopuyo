@@ -10,7 +10,7 @@ class CScene;
 class ISceneChanger {
 public:
 	// 現在のシーンの終わり方と次のシーンを渡し、シーンの変更をする
-	virtual void ChangeScene(std::shared_ptr<ITransEnd> howToStart,
+	virtual void ChangeScene(std::shared_ptr<ITransEnd> howToEnd,
 	                         std::shared_ptr<CScene>    nextScene) = 0;
 
 public:

@@ -22,14 +22,15 @@ public:
 
 #pragma region ”ñŒöŠJ
 private:
-	enum class BUTTON { BATTLE, TOKOTON } m_selected_button = BUTTON::BATTLE;
+	enum class BUTTON { BATTLE, TOKOTON, length } m_selected_button;
+	enum class STATE { SELECTING, TRANSITIONING } m_state;
 
 	/* ‰æ‘œ */
-	const std::shared_ptr<ImageBackground>      m_background;
-	const std::shared_ptr<ImageBattle>          m_battle;
-	const std::shared_ptr<ImageBattleSelected>  m_battle_selected;
-	const std::shared_ptr<ImageTokoton>         m_tokoton;
-	const std::shared_ptr<ImageTokotonSelected> m_tokoton_selected;
+	const std::shared_ptr<IGraphic> m_background;
+	const std::shared_ptr<IGraphic> m_battle;
+	const std::shared_ptr<IGraphic> m_battle_selected;
+	const std::shared_ptr<IGraphic> m_tokoton;
+	const std::shared_ptr<IGraphic> m_tokoton_selected;
 
 	/* ‰¹ */
 	BGMMenu m_BGMMenu;

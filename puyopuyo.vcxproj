@@ -163,9 +163,15 @@
   <ItemGroup>
     <ClInclude Include="BGMMenu.h" />
     <ClInclude Include="CBright.h" />
+    <ClInclude Include="CPuyoPuyo.h" />
+    <ClInclude Include="CPlayer_CFall.h" />
+    <ClInclude Include="CPuyoField.h" />
     <ClInclude Include="CTransDarkness.h" />
     <ClInclude Include="CTransFadein.h" />
     <ClInclude Include="CTransFadeout.h" />
+    <ClInclude Include="Game_define.h" />
+    <ClInclude Include="ImagePuyoPuyo.h" />
+    <ClInclude Include="Tokoton.h" />
     <ClInclude Include="ImageMenu.h" />
     <ClInclude Include="ISceneChanger.h" />
     <ClInclude Include="CScene.h" />
@@ -187,10 +193,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CBright.cpp" />
+    <ClCompile Include="CPuyoPuyo.cpp" />
+    <ClCompile Include="CPlayer_CFall_1.cpp" />
+    <ClCompile Include="CPlayer_CFall_2.cpp" />
+    <ClCompile Include="CPuyoField.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CTransDarkness.cpp" />
     <ClCompile Include="CTransFadein.cpp" />
     <ClCompile Include="CTransFadeout.cpp" />
+    <ClCompile Include="Game_define.cpp" />
+    <ClCompile Include="Tokoton.cpp" />
     <ClCompile Include="ITrans.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Opening.SSLogo.cpp" />

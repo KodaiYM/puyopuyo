@@ -1,9 +1,19 @@
-#include "CPuyoField.h"
-#include <string>
 #include <DxLib.h>
+#include <memory>
+#include <string>
 
-using namespace Game;
-CPuyoField::CPuyoField(int row, int col, int puyo_size, const std::shared_ptr<const CResourceMgr> resourceMgr) :mRow(row), mCol(col), mPuyoSize(puyo_size), mResourceMgr(std::move(resourceMgr)) {
+#include "CPuyoField.h"
+#include "ImagePuyoPuyo.h"
+
+using namespace PuyoPuyo;
+CPuyoField::CPuyoField(int row, int col, int puyo_size)
+    : mRow(row)
+    , mCol(col)
+    , mPuyoSize(puyo_size)
+    , m_left_cross(std::make_shared<ImageCross>(47 + (mCol / 2 - 1) * mPuyoSize,
+                                                13, ORIGIN::UPPER_LEFT))
+    , m_right_cross(std::make_shared<ImageCross>(47 + (mCol / 2) * mPuyoSize,
+                                                 13, ORIGIN::UPPER_LEFT)) {
 	mField.resize(mRow + 1);
 	mConnectionCount.resize(mRow);
 	/* ぷよフィールドの初期化 */
@@ -21,8 +31,8 @@ CPuyoField::CPuyoField(int row, int col, int puyo_size, const std::shared_ptr<co
 		}
 	}
 	mTransparency = 0;
-	mChain = 0;
-	mScene = Scene::drop;
+	mChain        = 0;
+	mScene        = Scene::drop;
 }
 void CPuyoField::set(Puyo puyo, int i, int j) {
 	mField[i + 1][j] = puyo;
@@ -38,12 +48,13 @@ PuyoType CPuyoField::getPuyoType(int i, int j) const {
 	}
 }
 bool CPuyoField::GameOvered() const {
-	return getPuyoType(0, mCol / 2 - 1) != PuyoType::none || getPuyoType(0, mCol / 2) != PuyoType::none;
+	return getPuyoType(0, mCol / 2 - 1) != PuyoType::none ||
+	       getPuyoType(0, mCol / 2) != PuyoType::none;
 }
 void CPuyoField::Draw(Point field) const {
 	// ×を描く
-	DrawGraph(field.x + (mCol / 2 - 1)*mPuyoSize, field.y, mResourceMgr->getGraphicHandle((int)GraphicName::cross), TRUE);
-	DrawGraph(field.x + (mCol / 2)*mPuyoSize, field.y, mResourceMgr->getGraphicHandle((int)GraphicName::cross), TRUE);
+	m_left_cross->draw();
+	m_right_cross->draw();
 	switch (mScene) {
 	case Scene::drop:
 	case Scene::judge_popable:
@@ -55,7 +66,7 @@ void CPuyoField::Draw(Point field) const {
 				// 相対座標を絶対座標に直してから描く
 				puyo.point.x += field.x + mPuyoSize * j;
 				puyo.point.y += field.y + mPuyoSize * i;
-				puyo.Draw(mResourceMgr);
+				puyo.Draw();
 			}
 		}
 		break;
@@ -72,16 +83,17 @@ void CPuyoField::Draw(Point field) const {
 
 				if (getConnectionNum(i, j) >= 4) {
 					SetDrawBlendMode(DX_BLENDMODE_ALPHA, *mTransparency);
-					puyo.Draw(mResourceMgr);
+					puyo.Draw();
 					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 				} else {
-					puyo.Draw(mResourceMgr);
+					puyo.Draw();
 				}
 			}
 		}
 		break;
 	default:
-		throw "CPuyoField にシーン" + std::to_string((int)mScene) + "は実装されていません。";
+		throw "CPuyoField にシーン" + std::to_string((int)mScene) +
+		    "は実装されていません。";
 		break;
 	}
 }
@@ -94,30 +106,43 @@ int CPuyoField::Pop() {
 			mScene = Scene::judge_popable;
 		}
 		break;
-	case Scene::judge_popable:
-	{
+	case Scene::judge_popable: {
 		// 消せるぷよがあるかどうか判定するとともに、ぷよの結合もチェック
 		bool popable = false;
 		for (int i = 0; i < mRow; i++) {
 			for (int j = 0; j < mCol; j++) {
 				// 上下のチェック
 				if (i == 0) {
-					mField[i + 1][j].setConnectionState(Puyo::Direction::bottom, getPuyoType(i + 1, j) == getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(Puyo::Direction::bottom,
+					                                    getPuyoType(i + 1, j) ==
+					                                        getPuyoType(i, j));
 				} else if (i == mRow - 1) {
-					mField[i + 1][j].setConnectionState(Puyo::Direction::top, getPuyoType(i - 1, j) == getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(
+					    Puyo::Direction::top, getPuyoType(i - 1, j) == getPuyoType(i, j));
 				} else {
-					mField[i + 1][j].setConnectionState(Puyo::Direction::bottom, getPuyoType(i + 1, j) == getPuyoType(i, j));
-					mField[i + 1][j].setConnectionState(Puyo::Direction::top, getPuyoType(i - 1, j) == getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(Puyo::Direction::bottom,
+					                                    getPuyoType(i + 1, j) ==
+					                                        getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(
+					    Puyo::Direction::top, getPuyoType(i - 1, j) == getPuyoType(i, j));
 				}
 
 				// 左右のチェック
 				if (j == 0) {
-					mField[i + 1][j].setConnectionState(Puyo::Direction::right, getPuyoType(i, j + 1) == getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(Puyo::Direction::right,
+					                                    getPuyoType(i, j + 1) ==
+					                                        getPuyoType(i, j));
 				} else if (j == mCol - 1) {
-					mField[i + 1][j].setConnectionState(Puyo::Direction::left, getPuyoType(i, j - 1) == getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(Puyo::Direction::left,
+					                                    getPuyoType(i, j - 1) ==
+					                                        getPuyoType(i, j));
 				} else {
-					mField[i + 1][j].setConnectionState(Puyo::Direction::right, getPuyoType(i, j + 1) == getPuyoType(i, j));
-					mField[i + 1][j].setConnectionState(Puyo::Direction::left, getPuyoType(i, j - 1) == getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(Puyo::Direction::right,
+					                                    getPuyoType(i, j + 1) ==
+					                                        getPuyoType(i, j));
+					mField[i + 1][j].setConnectionState(Puyo::Direction::left,
+					                                    getPuyoType(i, j - 1) ==
+					                                        getPuyoType(i, j));
 				}
 
 				if (getPuyoType(i, j) != PuyoType::none && CountConnection(i, j) >= 4) {
@@ -146,32 +171,39 @@ int CPuyoField::Pop() {
 		}
 		mTransparency = std::make_unique<int>(255);
 		mBlinkPopPuyo = std::make_unique<blink_pop_puyo>(mTransparency);
-		mScene = Scene::blink_pop_puyo;
+		mScene        = Scene::blink_pop_puyo;
 	case Scene::blink_pop_puyo:
 		if (mBlinkPopPuyo->blink() == 0) {
 			mBlinkPopPuyo.reset();
 			mChain++;
 			switch (mChain) {
 			case 1:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain1), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain1),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			case 2:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain2), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain2),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			case 3:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain3), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain3),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			case 4:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain4), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain4),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			case 5:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain5), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain5),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			case 6:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain6), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain6),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			default:
-				PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain7), DX_PLAYTYPE_BACK);
+				// PlaySoundMem(mResourceMgr->getSoundHandle((int)SoundName::chain7),
+				//             DX_PLAYTYPE_BACK);
 				break;
 			}
 			mScene = Scene::pop;
@@ -196,11 +228,13 @@ int CPuyoField::Pop() {
 	return 1;
 }
 CPuyoField::blink_pop_puyo::blink_pop_puyo(std::shared_ptr<int> transparency)
-	:mMaxTransparency(*transparency), mMinTransparency(*transparency - 100), mTransparency(std::move(transparency)) {
+    : mMaxTransparency(*transparency)
+    , mMinTransparency(*transparency - 100)
+    , mTransparency(std::move(transparency)) {
 	mCounter = 0;
 }
 int CPuyoField::blink_pop_puyo::blink() {
-	if (mCounter >= mBlinkNum*2) {
+	if (mCounter >= mBlinkNum * 2) {
 		return 0;
 	}
 	if (mCounter % 2) {
@@ -219,25 +253,30 @@ int CPuyoField::blink_pop_puyo::blink() {
 	return 1;
 }
 
-int CPuyoField::subCountConnection(int i, int j, PuyoType type, std::vector< std::vector<bool> >* connected) {
-	connected->at(i)[j] = true;
+int CPuyoField::subCountConnection(int i, int j, PuyoType type,
+                                   std::vector<std::vector<bool> > *connected) {
+	connected->at(i)[j]    = true;
 	mConnectionCount[i][j] = 1;
 
 	/* 隣接しているかチェック */
 	// 右
-	if (j < mCol - 1 && getPuyoType(i, j + 1) == type && mConnectionCount[i][j + 1] == -1) {
+	if (j < mCol - 1 && getPuyoType(i, j + 1) == type &&
+	    mConnectionCount[i][j + 1] == -1) {
 		mConnectionCount[i][j] += subCountConnection(i, j + 1, type, connected);
 	}
 	// 上
-	if (i >= 1 && getPuyoType(i - 1, j) == type && mConnectionCount[i - 1][j] == -1) {
+	if (i >= 1 && getPuyoType(i - 1, j) == type &&
+	    mConnectionCount[i - 1][j] == -1) {
 		mConnectionCount[i][j] += subCountConnection(i - 1, j, type, connected);
 	}
 	// 左
-	if (j >= 1 && getPuyoType(i, j - 1) == type && mConnectionCount[i][j - 1] == -1) {
+	if (j >= 1 && getPuyoType(i, j - 1) == type &&
+	    mConnectionCount[i][j - 1] == -1) {
 		mConnectionCount[i][j] += subCountConnection(i, j - 1, type, connected);
 	}
 	// 下
-	if (i < mRow - 1 && getPuyoType(i + 1, j) == type && mConnectionCount[i + 1][j] == -1) {
+	if (i < mRow - 1 && getPuyoType(i + 1, j) == type &&
+	    mConnectionCount[i + 1][j] == -1) {
 		mConnectionCount[i][j] += subCountConnection(i + 1, j, type, connected);
 	}
 
@@ -258,8 +297,8 @@ int CPuyoField::CountConnection(int i, int j) {
 
 	// 調査の必要がある場合
 	{
-		int n;
-		std::vector< std::vector<bool> > connected;
+		int                             n;
+		std::vector<std::vector<bool> > connected;
 		connected.resize(mRow);
 		for (int l = 0; l < mRow; l++) {
 			connected[l].resize(mCol);
@@ -296,7 +335,7 @@ int CPuyoField::Drop() {
 	for (int j = 0; j < mCol; j++) {
 		bool droppable = false;
 		for (int i = mRow - 1; i >= -1; i--) {
-			Puyo& puyo = mField[i + 1][j];
+			Puyo &puyo = mField[i + 1][j];
 			if (puyo.type == PuyoType::none) {
 				droppable = true;
 			} else if (droppable) {

@@ -37,6 +37,12 @@
     <Filter Include="Resource\Sound\Effect">
       <UniqueIdentifier>{375eab98-a5e2-425a-b0b1-03a48002bd9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene\Tokoton">
+      <UniqueIdentifier>{4cb88e8d-f4c5-429b-83f6-ad35850570e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parts">
+      <UniqueIdentifier>{e6e5b1df-b194-4d0d-81c8-c254500b7906}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="key.h">
@@ -108,6 +114,24 @@
     <ClInclude Include="IGraphic.h">
       <Filter>Resource\Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="Tokoton.h">
+      <Filter>Scene\Tokoton</Filter>
+    </ClInclude>
+    <ClInclude Include="CPuyoField.h">
+      <Filter>Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer_CFall.h">
+      <Filter>Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="CPuyoPuyo.h">
+      <Filter>Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Game_define.h">
+      <Filter>Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="ImagePuyoPuyo.h">
+      <Filter>Resource\Graphic\Image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="key.cpp">
@@ -149,6 +173,24 @@
     </ClCompile>
     <ClCompile Include="ITrans.cpp">
       <Filter>Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="Tokoton.cpp">
+      <Filter>Scene\Tokoton</Filter>
+    </ClCompile>
+    <ClCompile Include="CPuyoField.cpp">
+      <Filter>Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_CFall_1.cpp">
+      <Filter>Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_CFall_2.cpp">
+      <Filter>Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="CPuyoPuyo.cpp">
+      <Filter>Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_define.cpp">
+      <Filter>Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

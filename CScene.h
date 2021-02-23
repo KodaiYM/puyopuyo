@@ -14,9 +14,6 @@ public:
 
 public:
 	void draw() const;
-	void clearDrawList() noexcept;
-	void addToDrawList(std::shared_ptr<const IGraphic> task);
-	void eraseFromDrawList(std::shared_ptr<const IGraphic> task);
 
 public:
 	CScene(std::weak_ptr<ISceneChanger> sceneChanger) noexcept;
@@ -29,7 +26,11 @@ public:
 
 #pragma region Œp³æ‚Ì‚İŒöŠJ
 protected:
-	std::weak_ptr<ISceneChanger> m_sceneChanger;
+	void clearDrawList() noexcept;
+	void addToDrawList(std::shared_ptr<const IGraphic> task);
+	void eraseFromDrawList(std::shared_ptr<const IGraphic> task);
+
+	const std::weak_ptr<ISceneChanger> m_sceneChanger;
 #pragma endregion
 
 #pragma region ”ñŒöŠJ

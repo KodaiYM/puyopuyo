@@ -8,12 +8,12 @@
 #include "CTransFadein.h"
 #include "Opening.MyLogo.h"
 #include <DxLib.h>
-//#include "Game.h" /* デバッグ中 */
+//#include "PuyoPuyo.h" /* デバッグ中 */
 #include "key.h"
 #include <memory>
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
-#if DEBUG | _DEBUG
+#if DEBUG || _DEBUG
 	AllocConsole();
 	(void)std::freopen("CONOUT$", "w", stdout);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
